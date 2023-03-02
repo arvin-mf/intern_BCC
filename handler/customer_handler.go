@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"errors"
 	"intern_BCC/model"
 	"intern_BCC/repository"
+	"intern_BCC/sdk/crypto"
 	"intern_BCC/sdk/response"
 	"net/http"
 	"strconv"
@@ -31,6 +33,30 @@ func (h *customerHandler) CreateCustomer(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusCreated, "Customer creation success", result)
+}
+
+func (h *customerHandler) Login(c *gin.Context) {
+	var request model.Login
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "bad request", err)
+		return
+	}
+	customer, err := h.Repository.FindByEmail(request.Email)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "email not found", err)
+		return
+	}
+	err = crypto.ValidateHash(request.Password, customer.Password)
+	if err != nil {
+		msg := "wrong password"
+		response.FailOrError(c, http.StatusBadRequest, msg, errors.New(msg))
+		return
+	}
+	/*
+		Pertokenan
+	*/
+	response.Success(c, http.StatusOK, "login success", nil)
 }
 
 func (h *customerHandler) GetAllCustomer(c *gin.Context) {

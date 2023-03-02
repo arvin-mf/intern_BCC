@@ -6,6 +6,11 @@ type CreateCustomerRequest struct {
 	Password string `json:"password"`
 }
 
+type Login struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type GetCustomerByIDRequest struct {
 	ID uint `uri:"id" binding:"required"`
 }

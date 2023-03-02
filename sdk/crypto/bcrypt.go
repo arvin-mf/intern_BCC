@@ -12,3 +12,8 @@ func HashValue(rawValue string) (string, error) {
 	hashPassword := string(password)
 	return hashPassword, nil
 }
+
+func ValidateHash(rawValue, hashValue string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(hashValue), []byte(rawValue))
+	return err
+}

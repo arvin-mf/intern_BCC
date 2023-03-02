@@ -33,6 +33,12 @@ func (r *CustomerRepository) CreateCustomer(model model.CreateCustomerRequest) (
 	return &customer, nil
 }
 
+func (r *CustomerRepository) FindByEmail(email string) (entity.Customer, error) {
+	customer := entity.Customer{}
+	err := r.db.Where("email = ?", email).First(&customer).Error
+	return customer, err
+}
+
 func (r *CustomerRepository) GetAllCustomer() ([]entity.Customer, error) {
 	var customers []entity.Customer
 	err := r.db.Find(&customers).Error
