@@ -54,7 +54,7 @@ func (h *customerHandler) Login(c *gin.Context) {
 		return
 	}
 	/*
-		Pertokenan
+		PerTOKENan
 	*/
 	response.Success(c, http.StatusOK, "login success", nil)
 }

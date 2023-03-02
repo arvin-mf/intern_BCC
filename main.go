@@ -37,7 +37,7 @@ func main() {
 	// r.GET("/", ...)
 
 	//---- Login dan Register ----
-	// r.POST("/login", ...)
+	r.POST("/login", customerHandler.Login)
 	r.POST("/register/customer", customerHandler.CreateCustomer)
 
 	//---- Keperrluan Cek Database ----
