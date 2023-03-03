@@ -32,3 +32,9 @@ func (r *OwnerRepository) CreateOwner(model model.CreateOwnerRequest) (*entity.O
 	}
 	return &owner, nil
 }
+
+func (r *OwnerRepository) FindByEmail(email string) (entity.Owner, error) {
+	owner := entity.Owner{}
+	err := r.db.Where("email = ?", email).First(&owner).Error
+	return owner, err
+}

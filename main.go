@@ -41,11 +41,14 @@ func main() {
 	//---- Login dan Register ----
 	r.POST("/login", customerHandler.Login)
 	r.POST("/register/customer", customerHandler.CreateCustomer)
+	r.POST("/login/owner", ownerHandler.Login)
 
 	//---- Keperluan Cek Database ----
 	r.GET("/customers", customerHandler.GetAllCustomer)
 	r.GET("/customer/:id", customerHandler.GetCustomerByID)
 	r.DELETE("/customer/:id", customerHandler.DeleteCustomerByID)
+	// r.GET("/owners", ...)
+	// r.GET("/owner/:id", ...)
 
 	//---- Dashboard Customer, Memilih Working Space ----
 	r.GET("/places", placeHandler.GetAllPlace)
