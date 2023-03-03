@@ -47,8 +47,9 @@ func main() {
 	r.GET("/customers", customerHandler.GetAllCustomer)
 	r.GET("/customer/:id", customerHandler.GetCustomerByID)
 	r.DELETE("/customer/:id", customerHandler.DeleteCustomerByID)
-	// r.GET("/owners", ...)
-	// r.GET("/owner/:id", ...)
+	r.GET("/owners", ownerHandler.GetAllOwner)
+	r.GET("/owner/:id", ownerHandler.GetOwnerByID)
+	r.DELETE("/owner/:id", ownerHandler.DeleteOwnerByID)
 
 	//---- Dashboard Customer, Memilih Working Space ----
 	r.GET("/places", placeHandler.GetAllPlace)

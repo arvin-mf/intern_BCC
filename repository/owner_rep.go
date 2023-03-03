@@ -38,3 +38,21 @@ func (r *OwnerRepository) FindByEmail(email string) (entity.Owner, error) {
 	err := r.db.Where("email = ?", email).First(&owner).Error
 	return owner, err
 }
+
+func (r *OwnerRepository) GetAllOwner() ([]entity.Owner, error) {
+	var owners []entity.Owner
+	err := r.db.Find(&owners).Error
+	return owners, err
+}
+
+func (r *OwnerRepository) GetOwnerByID(id uint) (entity.Owner, error) {
+	owner := entity.Owner{}
+	err := r.db.First(&owner, id).Error
+	return owner, err
+}
+
+func (r *OwnerRepository) DeleteOwnerByID(ID uint) error {
+	var owner entity.Owner
+	err := r.db.Delete(&owner, ID).Error
+	return err
+}
