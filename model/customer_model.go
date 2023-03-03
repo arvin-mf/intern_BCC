@@ -7,9 +7,10 @@ import (
 )
 
 type CreateCustomerRequest struct {
-	Nama     string `json:"nama"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Nama      string `json:"nama"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	Konfirmpw string `json:"konfirmpw"`
 }
 
 type Login struct {
