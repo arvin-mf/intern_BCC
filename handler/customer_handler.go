@@ -27,6 +27,12 @@ func (h *customerHandler) CreateCustomer(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "bad request", err)
 		return
 	}
+	_, err = h.Repository.FindByEmail(customer.Email)
+	if err == nil {
+		msg := "email is used"
+		response.FailOrError(c, http.StatusBadRequest, msg, errors.New(msg))
+		return
+	}
 	result, err := h.Repository.CreateCustomer(customer)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "Customer creation failed", err)

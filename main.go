@@ -40,7 +40,7 @@ func main() {
 	r.POST("/login", customerHandler.Login)
 	r.POST("/register/customer", customerHandler.CreateCustomer)
 
-	//---- Keperrluan Cek Database ----
+	//---- Keperluan Cek Database ----
 	r.GET("/customers", customerHandler.GetAllCustomer)
 	r.GET("/customer/:id", customerHandler.GetCustomerByID)
 	r.DELETE("/customer/:id", customerHandler.DeleteCustomerByID)
