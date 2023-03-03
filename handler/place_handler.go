@@ -26,8 +26,9 @@ func (h *placeHandler) CreatePlace(c *gin.Context) {
 		return
 	}
 	place := entity.Place{
-		Nama:   request.Nama,
-		Alamat: request.Alamat,
+		Nama:    request.Nama,
+		Alamat:  request.Alamat,
+		OwnerID: request.OwnerID,
 	}
 	err := h.Repository.CreatePlace(&place)
 	if err != nil {

@@ -29,21 +29,21 @@ func (h *customerHandler) CreateCustomer(c *gin.Context) {
 	}
 	_, err = h.Repository.FindByEmail(customer.Email)
 	if err == nil {
-		msg := "email is used"
-		response.FailOrError(c, http.StatusBadRequest, msg, errors.New(msg))
+		msg := "Email sudah dipakai"
+		response.FailOrError(c, http.StatusBadRequest, "customer creation failed", errors.New(msg))
 		return
 	}
 	if customer.Password != customer.Konfirmpw {
-		msg := "konfirmasi password gagal"
-		response.FailOrError(c, http.StatusBadRequest, msg, errors.New(msg))
+		msg := "Konfirmasi password gagal"
+		response.FailOrError(c, http.StatusBadRequest, "customer creation failed", errors.New(msg))
 		return
 	}
 	result, err := h.Repository.CreateCustomer(customer)
 	if err != nil {
-		response.FailOrError(c, http.StatusInternalServerError, "Customer creation failed", err)
+		response.FailOrError(c, http.StatusInternalServerError, "customer creation failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "Customer creation success", result)
+	response.Success(c, http.StatusCreated, "customer creation success", result)
 }
 
 func (h *customerHandler) Login(c *gin.Context) {
@@ -60,8 +60,8 @@ func (h *customerHandler) Login(c *gin.Context) {
 	}
 	err = crypto.ValidateHash(request.Password, customer.Password)
 	if err != nil {
-		msg := "wrong password"
-		response.FailOrError(c, http.StatusBadRequest, msg, errors.New(msg))
+		msg := "Password salah"
+		response.FailOrError(c, http.StatusBadRequest, "wrong password", errors.New(msg))
 		return
 	}
 	/*
@@ -73,24 +73,24 @@ func (h *customerHandler) Login(c *gin.Context) {
 func (h *customerHandler) GetAllCustomer(c *gin.Context) {
 	customers, err := h.Repository.GetAllCustomer()
 	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "Customers not found", err)
+		response.FailOrError(c, http.StatusNotFound, "customers not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "Customers found", customers)
+	response.Success(c, http.StatusOK, "customers found", customers)
 }
 
 func (h *customerHandler) GetCustomerByID(c *gin.Context) {
 	request := model.GetCustomerByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "Failed getting customer", err)
+		response.FailOrError(c, http.StatusBadRequest, "failed getting customer", err)
 		return
 	}
 	customer, err := h.Repository.GetCustomerByID(request.ID)
 	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "Customer not found", err)
+		response.FailOrError(c, http.StatusNotFound, "customer not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "Customer found", customer)
+	response.Success(c, http.StatusOK, "customer found", customer)
 }
 
 func (h *customerHandler) DeleteCustomerByID(c *gin.Context) {
@@ -98,8 +98,8 @@ func (h *customerHandler) DeleteCustomerByID(c *gin.Context) {
 	parsedID, _ := strconv.ParseUint(ID, 10, 64)
 	err := h.Repository.DeleteCustomerByID(uint(parsedID))
 	if err != nil {
-		response.FailOrError(c, http.StatusInternalServerError, "Delete customer failed", err)
+		response.FailOrError(c, http.StatusInternalServerError, "delete customer failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "Deleting success", nil)
+	response.Success(c, http.StatusOK, "deleting success", nil)
 }

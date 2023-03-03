@@ -30,9 +30,11 @@ func main() {
 
 	customerRepo := repository.NewCustomerRepository(db)
 	placeRepo := repository.NewPlaceRepository(db)
+	ownerRepo := repository.NewOwnerRepository(db)
 
 	customerHandler := handler.NewCustomerHandler(&customerRepo)
 	placeHandler := handler.NewPlaceHandler(&placeRepo)
+	ownerHandler := handler.NewOwnerHandler(&ownerRepo)
 
 	// r.GET("/", ...)
 
@@ -57,15 +59,16 @@ func main() {
 	// r.POST("/review", ...)
 
 	//---- Update Data Space ----
+	// r.POST("/login/owner", ...)
 	// r.GET("/owner", ...)  berisi data semua space milik owner A
-	// r.GET("/owner/:id")
-	// r.POST("/owner")
+	// r.GET("/owner/:id", ...)
+	// r.POST("/owner", ...)
 
-	//---- Admin : Input atau Edit Atribut Place ----
-	// r.GET("/admin-places", ...)
-	r.POST("/admin-place", placeHandler.CreatePlace)
-	// r.GET("/admin-place/:id", ...)
-	r.DELETE("/admin-place/:id", placeHandler.DeletePlaceByID)
+	//---- Admin ----
+	r.POST("/owner", ownerHandler.CreateOwner)
+	r.POST("/place", placeHandler.CreatePlace)
+	// r.GET("/place/:id", ...)
+	r.DELETE("/place/:id", placeHandler.DeletePlaceByID)
 
 	r.Run(":" + port)
 }
