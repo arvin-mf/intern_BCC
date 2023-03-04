@@ -71,7 +71,6 @@ func main() {
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)
 	r.POST("/place", placeHandler.CreatePlace)
-	// r.GET("/place/:id", ...)
 	r.DELETE("/place/:id", placeHandler.DeletePlaceByID)
 
 	r.Run(":" + port)

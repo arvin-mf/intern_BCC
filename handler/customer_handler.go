@@ -33,6 +33,11 @@ func (h *customerHandler) CreateCustomer(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "customer creation failed", errors.New(msg))
 		return
 	}
+	if len(customer.Password) < 8 {
+		msg := "Password minimal 8 karakter"
+		response.FailOrError(c, http.StatusBadRequest, "customer creation failed", errors.New(msg))
+		return
+	}
 	if customer.Password != customer.Konfirmpw {
 		msg := "Konfirmasi password gagal"
 		response.FailOrError(c, http.StatusBadRequest, "customer creation failed", errors.New(msg))
