@@ -5,6 +5,7 @@ import (
 	"intern_BCC/model"
 	"intern_BCC/repository"
 	"intern_BCC/sdk/crypto"
+	sdk_jwt "intern_BCC/sdk/jwt"
 	"intern_BCC/sdk/response"
 	"net/http"
 	"strconv"
@@ -69,10 +70,14 @@ func (h *customerHandler) Login(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "wrong password", errors.New(msg))
 		return
 	}
-	/*
-		PerTOKENan
-	*/
-	response.Success(c, http.StatusOK, "login success", nil)
+	tokenJwt, err := sdk_jwt.GenerateToken(customer)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "create token failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "login success", gin.H{
+		"token": tokenJwt,
+	})
 }
 
 func (h *customerHandler) GetAllCustomer(c *gin.Context) {
