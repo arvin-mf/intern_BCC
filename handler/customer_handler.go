@@ -49,7 +49,7 @@ func (h *customerHandler) CreateCustomer(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "customer creation failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "customer creation success", result)
+	response.Success(c, http.StatusCreated, "customer creation success", result, nil)
 }
 
 func (h *customerHandler) Login(c *gin.Context) {
@@ -77,7 +77,7 @@ func (h *customerHandler) Login(c *gin.Context) {
 	}
 	response.Success(c, http.StatusOK, "login success", gin.H{
 		"token": tokenJwt,
-	})
+	}, nil)
 }
 
 func (h *customerHandler) GetAllCustomer(c *gin.Context) {
@@ -86,7 +86,7 @@ func (h *customerHandler) GetAllCustomer(c *gin.Context) {
 		response.FailOrError(c, http.StatusNotFound, "customers not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "customers found", customers)
+	response.Success(c, http.StatusOK, "customers found", customers, nil)
 }
 
 func (h *customerHandler) GetCustomerByID(c *gin.Context) {
@@ -100,7 +100,7 @@ func (h *customerHandler) GetCustomerByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusNotFound, "customer not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "customer found", customer)
+	response.Success(c, http.StatusOK, "customer found", customer, nil)
 }
 
 func (h *customerHandler) DeleteCustomerByID(c *gin.Context) {
@@ -111,5 +111,5 @@ func (h *customerHandler) DeleteCustomerByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "delete customer failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "deleting success", nil)
+	response.Success(c, http.StatusOK, "deleting success", nil, nil)
 }

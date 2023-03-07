@@ -33,7 +33,7 @@ func (h *ownerHandler) CreateOwner(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "owner creation failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "owner creation success", result)
+	response.Success(c, http.StatusCreated, "owner creation success", result, nil)
 }
 
 func (h *ownerHandler) Login(c *gin.Context) {
@@ -61,7 +61,7 @@ func (h *ownerHandler) Login(c *gin.Context) {
 	}
 	response.Success(c, http.StatusOK, "login success", gin.H{
 		"token": tokenJwt,
-	})
+	}, nil)
 }
 
 func (h *ownerHandler) GetAllOwner(c *gin.Context) {
@@ -70,7 +70,7 @@ func (h *ownerHandler) GetAllOwner(c *gin.Context) {
 		response.FailOrError(c, http.StatusNotFound, "owners not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "owners found", owners)
+	response.Success(c, http.StatusOK, "owners found", owners, nil)
 }
 
 func (h *ownerHandler) GetOwnerByID(c *gin.Context) {
@@ -84,7 +84,7 @@ func (h *ownerHandler) GetOwnerByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusNotFound, "owner not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "owner found", owner)
+	response.Success(c, http.StatusOK, "owner found", owner, nil)
 }
 
 func (h *ownerHandler) DeleteOwnerByID(c *gin.Context) {
@@ -95,5 +95,5 @@ func (h *ownerHandler) DeleteOwnerByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "delete owner failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "deleting success", nil)
+	response.Success(c, http.StatusOK, "deleting success", nil, nil)
 }

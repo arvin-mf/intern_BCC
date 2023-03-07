@@ -35,16 +35,23 @@ func (h *placeHandler) CreatePlace(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "Create place failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "Place creation succeeded", request)
+	response.Success(c, http.StatusCreated, "Place creation succeeded", request, nil)
 }
 
 func (h *placeHandler) GetAllPlace(c *gin.Context) {
-	places, err := h.Repository.GetAllPlace()
+	var placeParam model.PaginParam
+	if err := h.Repository.BindParam(c, &placeParam); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
+		return
+	}
+	placeParam.FormatPagin()
+	places, totalElements, err := h.Repository.GetAllPlace(&placeParam)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "Places not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "Places found", places)
+	placeParam.ProcessPagin(totalElements)
+	response.Success(c, http.StatusOK, "Places found", places, &placeParam)
 }
 
 func (h *placeHandler) GetPlaceByID(c *gin.Context) {
@@ -60,7 +67,7 @@ func (h *placeHandler) GetPlaceByID(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "Place found", place)
+	response.Success(c, http.StatusOK, "Place found", place, nil)
 }
 
 func (h *placeHandler) DeletePlaceByID(c *gin.Context) {
@@ -71,5 +78,5 @@ func (h *placeHandler) DeletePlaceByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "Place deleting failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "Successfully deleted place", nil)
+	response.Success(c, http.StatusOK, "Successfully deleted place", nil, nil)
 }
