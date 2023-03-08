@@ -56,7 +56,7 @@ func (h spaceHandler) GetAllSpace(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
 }
 
-func (h spaceHandler) GetSpaceByKategori(c *gin.Context) {
+func (h spaceHandler) GetSpaceByParam(c *gin.Context) {
 	var request model.CategoryRequest
 	if err := h.Repository.BindParam(c, &request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
@@ -68,7 +68,7 @@ func (h spaceHandler) GetSpaceByKategori(c *gin.Context) {
 		return
 	}
 	spaceParam.FormatPagin()
-	spaces, totalElements, err := h.Repository.GetSpaceByKategori(&spaceParam, &request)
+	spaces, totalElements, err := h.Repository.GetSpaceByParam(&spaceParam, &request)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "Spaces not found", err)
 		return

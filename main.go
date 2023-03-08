@@ -54,7 +54,7 @@ func main() {
 
 	//---- Dashboard Customer, Memilih Working Space ----
 	r.GET("/spaces", spaceHandler.GetAllSpace)
-	r.GET("/spaces/find", spaceHandler.GetSpaceByKategori)
+	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
 	// r.GET("/space/:id", spaceHandler.GetSpaceByID)
 
 	//---- Pemesanan ----

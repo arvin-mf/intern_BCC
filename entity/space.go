@@ -15,7 +15,7 @@ type Space struct {
 	Harga     int      `json:"harga"`
 	Periode   int      `json:"periode"`
 	OwnerID   uint     `json:"owner_id"`
-	Options   []Option `json:"opsi"`
+	Options   []Option `json:"options"`
 }
 
 var Category []string = []string{"private", "coworking", "meeting room"}

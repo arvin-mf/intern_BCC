@@ -39,19 +39,51 @@ func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]entity.Space, 
 	return spaces, int(totalElements), err
 }
 
-func (r *SpaceRepository) GetSpaceByKategori(pagin *model.PaginParam, cat *model.CategoryRequest) ([]entity.Space, int, error) {
+func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.CategoryRequest) ([]entity.Space, int, error) {
 	var spaces []entity.Space
-	err := r.db.
-		Model(entity.Space{}).
-		Where("kategori = ?", cat.Kategori).
-		Limit(pagin.Limit).
-		Offset(pagin.Offset).
-		Find(&spaces).Error
-	if err != nil {
-		return nil, 0, err
+	if cat.Kategori == "" && cat.Search == "" {
+		err := r.db.
+			Model(entity.Space{}).
+			Limit(pagin.Limit).
+			Offset(pagin.Offset).
+			Find(&spaces).Error
+		if err != nil {
+			return nil, 0, err
+		}
+	} else if cat.Search == "" {
+		err := r.db.
+			Model(entity.Space{}).
+			Where("kategori = ?", cat.Kategori).
+			Limit(pagin.Limit).
+			Offset(pagin.Offset).
+			Find(&spaces).Error
+		if err != nil {
+			return nil, 0, err
+		}
+	} else if cat.Kategori == "" {
+		err := r.db.
+			Model(entity.Space{}).
+			Where("nama LIKE ?", "%"+cat.Search+"%").
+			Limit(pagin.Limit).
+			Offset(pagin.Offset).
+			Find(&spaces).Error
+		if err != nil {
+			return nil, 0, err
+		}
+	} else {
+		err := r.db.
+			Model(entity.Space{}).
+			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
+			Limit(pagin.Limit).
+			Offset(pagin.Offset).
+			Find(&spaces).Error
+		if err != nil {
+			return nil, 0, err
+		}
 	}
+
 	var totalElements int64
-	err = r.db.Model(entity.Space{}).Count(&totalElements).Error
+	err := r.db.Model(entity.Space{}).Count(&totalElements).Error
 	if err != nil {
 		return nil, 0, err
 	}

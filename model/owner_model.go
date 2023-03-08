@@ -1,8 +1,8 @@
 package model
 
 type CreateOwnerRequest struct {
-	Email    string `json:"email"`
-	Whatsapp string `json:"whatsapp"`
+	Email    string `json:"email" binding:"required"`
+	Whatsapp string `json:"whatsapp" binding:"required"`
 }
 
 type GetOwnerByIDRequest struct {
