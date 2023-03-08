@@ -1,13 +1,16 @@
 package entity
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
 type Order struct {
 	gorm.Model
-	Waktu      int    `json:"waktu"`
-	CustomerID uint   `json:"customer_id"`
-	SpaceID    uint   `json:"space_id"`
-	Review     Review `json:"review"`
+	CustomerID uint      `json:"customer_id"`
+	SpaceID    uint      `json:"space_id"`
+	Waktu      string    `json:"waktu"`
+	Tanggal    time.Time `json:"tanggal"`
+	Review     Review    `json:"review"`
 }

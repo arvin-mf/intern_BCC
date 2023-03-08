@@ -21,22 +21,18 @@ func (r *PlaceRepository) CreatePlace(place *entity.Place) error {
 	return r.db.Create(place).Error
 }
 
-func (r *PlaceRepository) GetAllPlace(model *model.PaginParam) ([]entity.Place, int, error) {
+func (r *PlaceRepository) GetAllPlace(pagin *model.PaginParam) ([]entity.Place, int, error) {
 	var places []entity.Place
 	err := r.db.
 		Model(entity.Place{}).
-		Limit(model.Limit).
-		Offset(model.Offset).
+		Limit(pagin.Limit).
+		Offset(pagin.Offset).
 		Find(&places).Error
 	if err != nil {
 		return nil, 0, err
 	}
 	var totalElements int64
-	err = r.db.
-		Model(entity.Place{}).
-		Limit(model.Limit).
-		Offset(model.Offset).
-		Count(&totalElements).Error
+	err = r.db.Model(entity.Place{}).Count(&totalElements).Error
 	if err != nil {
 		return nil, 0, err
 	}

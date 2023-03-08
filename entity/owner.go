@@ -9,15 +9,14 @@ type Place struct {
 	Nama    string   `gorm:"type:VARCHAR(50); NOT NULL" json:"nama"`
 	Alamat  string   `gorm:"type:LONGTEXT; NOT NULL" json:"alamat"`
 	OwnerID uint     `json:"owner_id"`
-	Spaces  []Space  `json:"spaces"`
 	Reviews []Review `json:"reviews"`
 }
 
 type Owner struct {
 	gorm.Model
-	Email    string `gorm:"type:VARCHAR(50); NOT NULL" json:"email"`
-	Password string `gorm:"type:TEXT; NOT NULL" json:"password"`
-	Nama     string `gorm:"type:VARCHAR(50)" json:"nama"`
-	Whatsapp string `gorm:"type:VARCHAR(15); NOT NULL" json:"wnatsapp"`
-	PlaceID  uint   `json:"place_id"`
+	Email    string  `gorm:"type:VARCHAR(50); NOT NULL" json:"email"`
+	Password string  `gorm:"type:TEXT; NOT NULL" json:"password"`
+	Nama     string  `gorm:"type:VARCHAR(50)" json:"nama"`
+	Whatsapp string  `gorm:"type:VARCHAR(15); NOT NULL" json:"wnatsapp"`
+	Spaces   []Space `json:"spaces"`
 }

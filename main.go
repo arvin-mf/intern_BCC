@@ -11,7 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
-//remove this comment
+
+// remove this comment
 func main() {
 	fmt.Println("Hello")
 	r := gin.Default()
@@ -29,11 +30,11 @@ func main() {
 	}
 
 	customerRepo := repository.NewCustomerRepository(db)
-	placeRepo := repository.NewPlaceRepository(db)
+	spaceRepo := repository.NewSpaceRepository(db)
 	ownerRepo := repository.NewOwnerRepository(db)
 
 	customerHandler := handler.NewCustomerHandler(&customerRepo)
-	placeHandler := handler.NewPlaceHandler(&placeRepo)
+	spaceHandler := handler.NewSpaceHandler(&spaceRepo)
 	ownerHandler := handler.NewOwnerHandler(&ownerRepo)
 
 	// r.GET("/", ...)
@@ -52,8 +53,9 @@ func main() {
 	r.DELETE("/owner/:id", ownerHandler.DeleteOwnerByID)
 
 	//---- Dashboard Customer, Memilih Working Space ----
-	r.GET("/places", placeHandler.GetAllPlace)
-	r.GET("/place/:id", placeHandler.GetPlaceByID)
+	r.GET("/spaces", spaceHandler.GetAllSpace)
+	r.GET("/spaces/find", spaceHandler.GetSpaceByKategori)
+	// r.GET("/space/:id", spaceHandler.GetSpaceByID)
 
 	//---- Pemesanan ----
 
@@ -70,8 +72,8 @@ func main() {
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)
-	r.POST("/place", placeHandler.CreatePlace)
-	r.DELETE("/place/:id", placeHandler.DeletePlaceByID)
+	r.POST("/space", spaceHandler.CreateSpace)
+	// r.DELETE("/place/:id", placeHandler.DeletePlaceByID)
 
 	r.Run(":" + port)
 }

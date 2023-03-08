@@ -31,5 +31,6 @@ func AutoMigrate(db *gorm.DB) error {
 		&entity.Space{},
 		&entity.Order{},
 		&entity.Review{},
+		&entity.Option{},
 	)
 }
