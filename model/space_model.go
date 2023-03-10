@@ -16,6 +16,10 @@ type CreateSpaceRequest struct {
 	OwnerID    uint   `json:"owner_id" binding:"required"`
 }
 
+type GetSpaceByIDRequest struct {
+	ID uint `uri:"id" binding:"required"`
+}
+
 type CreateOptionRequest struct {
 	SpaceID uint   `json:"space_id" binding:"required"`
 	Rentang string `json:"rentang" binding:"required"`

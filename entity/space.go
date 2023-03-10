@@ -21,8 +21,18 @@ type Space struct {
 var Category []string = []string{"private", "coworking", "meeting room"}
 
 type Option struct {
-	Rentang  string    `gorm:"type:VARCHAR(10); NOT NULL" json:"rentang"`
+	gorm.Model
+	Rentang string `gorm:"type:VARCHAR(10); NOT NULL" json:"rentang"`
+	Dates   []Date `json:"dates"`
+	OwnerID uint   `json:"owner_id"`
+	SpaceID uint   `json:"space_id"`
+}
+
+type Date struct {
+	gorm.Model
 	Tanggal  time.Time `json:"tanggal"`
 	Tersedia bool      `json:"tersedia"`
+	OwnerID  uint      `json:"owner_id"`
 	SpaceID  uint      `json:"space_id"`
+	OptionID uint      `json:"option_id"`
 }

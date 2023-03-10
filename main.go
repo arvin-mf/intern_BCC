@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"intern_BCC/database"
 	"intern_BCC/handler"
+	"intern_BCC/middleware"
 	"intern_BCC/repository"
 	"log"
 	"os"
@@ -32,30 +33,32 @@ func main() {
 	customerRepo := repository.NewCustomerRepository(db)
 	spaceRepo := repository.NewSpaceRepository(db)
 	ownerRepo := repository.NewOwnerRepository(db)
+	orderRepo := repository.NewOrderRepository(db)
 
 	customerHandler := handler.NewCustomerHandler(&customerRepo)
 	spaceHandler := handler.NewSpaceHandler(&spaceRepo)
 	ownerHandler := handler.NewOwnerHandler(&ownerRepo)
+	orderHandler := handler.NewOrderHandler(&orderRepo)
 
 	// r.GET("/", ...)
 
 	//---- Login dan Register ----
 	r.POST("/login", customerHandler.Login)
 	r.POST("/register/customer", customerHandler.CreateCustomer)
-	r.POST("/login/owner", ownerHandler.Login)
 
 	//---- Keperluan Cek Database ----
 	r.GET("/customers", customerHandler.GetAllCustomer)
-	r.GET("/customer/:id", customerHandler.GetCustomerByID)
+	// r.GET("/customer/:id", customerHandler.GetCustomerByID)
 	r.DELETE("/customer/:id", customerHandler.DeleteCustomerByID)
 	r.GET("/owners", ownerHandler.GetAllOwner)
 	r.GET("/owner/:id", ownerHandler.GetOwnerByID)
 	r.DELETE("/owner/:id", ownerHandler.DeleteOwnerByID)
 
-	//---- Dashboard Customer, Memilih Working Space ----
+	//---- Memilih Working Space ----
 	r.GET("/spaces", spaceHandler.GetAllSpace)
 	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
-	// r.GET("/space/:id", spaceHandler.GetSpaceByID)
+	r.GET("/space/:id", spaceHandler.GetSpaceByID)
+	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
 
 	//---- Pemesanan ----
 
@@ -65,10 +68,10 @@ func main() {
 	// r.POST("/review", ...)
 
 	//---- Update Data Space ----
-	// r.POST("/login/owner", ...)
-	// r.GET("/owner", ...)  berisi data semua space milik owner A
-	// r.GET("/owner/:id", ...)
-	// r.POST("/owner", ...)
+	r.POST("/login/owner", ownerHandler.Login)
+	// r.GET("/owner", ...)
+	// r.GET("/owner/:id", ...)		ID Space
+	// r.POST("/owner/:id", ...)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)

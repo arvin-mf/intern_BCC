@@ -40,7 +40,7 @@ func (h *spaceHandler) CreateSpace(c *gin.Context) {
 	response.Success(c, http.StatusCreated, "space creation succeeded", request, nil)
 }
 
-func (h spaceHandler) GetAllSpace(c *gin.Context) {
+func (h *spaceHandler) GetAllSpace(c *gin.Context) {
 	var spaceParam model.PaginParam
 	if err := h.Repository.BindParam(c, &spaceParam); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
@@ -56,7 +56,7 @@ func (h spaceHandler) GetAllSpace(c *gin.Context) {
 	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
 }
 
-func (h spaceHandler) GetSpaceByParam(c *gin.Context) {
+func (h *spaceHandler) GetSpaceByParam(c *gin.Context) {
 	var request model.CategoryRequest
 	if err := h.Repository.BindParam(c, &request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
@@ -75,4 +75,18 @@ func (h spaceHandler) GetSpaceByParam(c *gin.Context) {
 	}
 	spaceParam.ProcessPagin(totalElements)
 	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
+}
+
+func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
+	request := model.GetSpaceByIDRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+		return
+	}
+	owner, err := h.Repository.GetSpaceByID(request.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "owner not found", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "owner found", owner, nil)
 }

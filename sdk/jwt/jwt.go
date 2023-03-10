@@ -18,7 +18,7 @@ func GenerateToken(payload entity.Customer) (string, error) {
 	if expStr == "" || err != nil {
 		exp = time.Hour * 1
 	}
-	tokenJwtSementara := jwt.NewWithClaims(jwt.SigningMethodHS256, model.NewUserClaims(payload.ID, exp))
+	tokenJwtSementara := jwt.NewWithClaims(jwt.SigningMethodHS256, model.NewUserClaims(payload.ID, payload.Role, exp))
 	tokenJwt, err := tokenJwtSementara.SignedString([]byte(os.Getenv("secret_key")))
 	if err != nil {
 		return "", err
@@ -33,7 +33,7 @@ func GenerateOwnerToken(payload entity.Owner) (string, error) {
 	if expStr == "" || err != nil {
 		exp = time.Hour * 1
 	}
-	tokenJwtSementara := jwt.NewWithClaims(jwt.SigningMethodHS256, model.NewUserClaims(payload.ID, exp))
+	tokenJwtSementara := jwt.NewWithClaims(jwt.SigningMethodHS256, model.NewUserClaims(payload.ID, payload.Role, exp))
 	tokenJwt, err := tokenJwtSementara.SignedString([]byte(os.Getenv("secret_key")))
 	if err != nil {
 		return "", err

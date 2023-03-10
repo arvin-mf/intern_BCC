@@ -19,13 +19,15 @@ type Login struct {
 }
 
 type UserClaims struct {
-	ID uint `json:"id" binding:"required"`
+	ID   uint   `json:"id" binding:"required"`
+	Role string `json:"role" binding:"required"`
 	jwt.RegisteredClaims
 }
 
-func NewUserClaims(id uint, exp time.Duration) UserClaims {
+func NewUserClaims(id uint, role string, exp time.Duration) UserClaims {
 	return UserClaims{
-		ID: id,
+		ID:   id,
+		Role: role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(exp)),
 		},
