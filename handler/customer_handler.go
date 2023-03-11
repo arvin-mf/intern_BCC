@@ -90,7 +90,7 @@ func (h *customerHandler) GetAllCustomer(c *gin.Context) {
 }
 
 func (h *customerHandler) GetCustomerByID(c *gin.Context) {
-	request := model.GetCustomerByIDRequest{}
+	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "failed getting customer", err)
 		return

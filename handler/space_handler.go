@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"intern_BCC/entity"
 	"intern_BCC/model"
 	"intern_BCC/repository"
@@ -78,7 +79,7 @@ func (h *spaceHandler) GetSpaceByParam(c *gin.Context) {
 }
 
 func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
-	request := model.GetSpaceByIDRequest{}
+	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
 		return
@@ -92,20 +93,26 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 }
 
 func (h *spaceHandler) AddPicture(c *gin.Context) {
-	link, err := h.Repository.Upload(c)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
-		return
-	}
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
 	if claims.Role != "owner" {
+		msg := "access denied"
+		response.FailOrError(c, http.StatusForbidden, msg, errors.New(msg))
+		return
+	}
+	request := model.GetByIDRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+		return
+	}
+	space, err := h.Repository.GetSpaceByID(request.ID)
+	if space.OwnerID != claims.ID {
 		response.FailOrError(c, http.StatusForbidden, "access denied", err)
 		return
 	}
-	request := model.GetSpaceByIDRequest{}
-	if err := c.ShouldBindUri(&request); err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+	link, err := h.Repository.Upload(c)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
 		return
 	}
 	err = h.Repository.AddPicture(request.ID, link)

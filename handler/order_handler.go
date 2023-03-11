@@ -28,7 +28,7 @@ func (h *orderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	request := model.GetSpaceByIDRequest{}
+	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
 		return
@@ -57,4 +57,24 @@ func (h *orderHandler) GetAllOrder(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, "orders found", orders, nil)
+}
+
+func (h *orderHandler) GetOrderByID(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.GetByIDRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "failed getting order", err)
+		return
+	}
+	order, err := h.Repository.GetOrderByID(request.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "order not found", err)
+		return
+	}
+	if order.CustomerID != claims.ID {
+		response.FailOrError(c, http.StatusForbidden, "access denied", err)
+	}
+	response.Success(c, http.StatusOK, "order found", order, nil)
 }

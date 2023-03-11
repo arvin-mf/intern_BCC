@@ -51,8 +51,8 @@ func (r *CustomerRepository) GetCustomerByID(id uint) (entity.Customer, error) {
 	return customer, err
 }
 
-func (r *CustomerRepository) DeleteCustomerByID(ID uint) error {
+func (r *CustomerRepository) DeleteCustomerByID(id uint) error {
 	var customer entity.Customer
-	err := r.db.Delete(&customer, ID).Error
+	err := r.db.Delete(&customer, id).Error
 	return err
 }

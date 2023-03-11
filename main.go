@@ -63,9 +63,9 @@ func main() {
 	//---- Pemesanan ----
 
 	//---- Riwayat Pesanan ----
-	// r.GET("/orders", ...)
-	// r.GET("/order/:id", ...)
-	// r.POST("/review", ...)
+	// r.GET("/orders", orderHandler.GetAllOrder)
+	// r.GET("/order/:id", orderHandler.GetOrderByID)
+	// r.POST("/order/:id/review", ...)
 
 	//---- Update Data Space ----
 	r.POST("/login/owner", ownerHandler.Login)

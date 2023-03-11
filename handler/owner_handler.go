@@ -74,7 +74,7 @@ func (h *ownerHandler) GetAllOwner(c *gin.Context) {
 }
 
 func (h *ownerHandler) GetOwnerByID(c *gin.Context) {
-	request := model.GetOwnerByIDRequest{}
+	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
 		return

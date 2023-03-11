@@ -91,11 +91,15 @@ func (r *SpaceRepository) GetSpaceByID(id uint) (entity.Space, error) {
 
 func (r *SpaceRepository) AddPicture(id uint, link string) error {
 	var space entity.Space
-	err := r.db.Model(entity.Space{}).Where("id = ?", id).First(&space).Error
+	err := r.db.First(&space, id).Error
 	if err != nil {
 		return err
 	}
 	space.Foto = link
+	err = r.db.Save(&space).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
