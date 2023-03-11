@@ -17,7 +17,7 @@ func NewOwnerRepository(db *gorm.DB) OwnerRepository {
 }
 
 func (r *OwnerRepository) CreateOwner(model model.CreateOwnerRequest) (*entity.Owner, error) {
-	hashPassword, err := crypto.HashValue("123456")
+	hashPassword, err := crypto.HashValue("12345678")
 	if err != nil {
 		return nil, err
 	}

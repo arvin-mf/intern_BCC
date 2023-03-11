@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"intern_BCC/entity"
 	"intern_BCC/model"
 	"intern_BCC/repository"
@@ -21,6 +22,11 @@ func NewOrderHandler(repo *repository.OrderRepository) orderHandler {
 func (h *orderHandler) CreateOrder(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
+	if claims.Role != "customer" {
+		msg := "access denied"
+		response.FailOrError(c, http.StatusForbidden, msg, errors.New(msg))
+		return
+	}
 
 	request := model.GetSpaceByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {

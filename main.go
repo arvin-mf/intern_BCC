@@ -72,6 +72,7 @@ func main() {
 	// r.GET("/owner", ...)
 	// r.GET("/owner/:id", ...)		ID Space
 	// r.POST("/owner/:id", ...)
+	r.POST("/owner/:id/picture", middleware.JwtMiddleware(), spaceHandler.AddPicture)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)

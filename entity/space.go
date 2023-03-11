@@ -14,6 +14,7 @@ type Space struct {
 	Alamat    string   `gorm:"type:LONGTEXT; NOT NULL" json:"alamat"`
 	Harga     int      `json:"harga"`
 	Periode   int      `json:"periode"`
+	Foto      string   `gorm:"type:LONGTEXT" json:"foto"`
 	OwnerID   uint     `json:"owner_id"`
 	Options   []Option `json:"options"`
 }

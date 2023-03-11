@@ -90,3 +90,28 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 	}
 	response.Success(c, http.StatusOK, "owner found", owner, nil)
 }
+
+func (h *spaceHandler) AddPicture(c *gin.Context) {
+	link, err := h.Repository.Upload(c)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
+		return
+	}
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+	if claims.Role != "owner" {
+		response.FailOrError(c, http.StatusForbidden, "access denied", err)
+		return
+	}
+	request := model.GetSpaceByIDRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+		return
+	}
+	err = h.Repository.AddPicture(request.ID, link)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "upload file failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "file uploaded", nil, nil)
+}

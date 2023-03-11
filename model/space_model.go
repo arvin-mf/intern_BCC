@@ -13,6 +13,7 @@ type CreateSpaceRequest struct {
 	Alamat     string `json:"alamat" binding:"required"`
 	Harga      int    `json:"harga" binding:"required"`
 	Periode    int    `json:"periode" binding:"required"`
+	Foto       string `json:"foto"`
 	OwnerID    uint   `json:"owner_id" binding:"required"`
 }
 
