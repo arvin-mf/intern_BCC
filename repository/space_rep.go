@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"intern_BCC/entity"
 	"intern_BCC/model"
 
 	supabasestorageuploader "github.com/adityarizkyramadhan/supabase-storage-uploader"
@@ -18,14 +17,14 @@ func NewSpaceRepository(db *gorm.DB) SpaceRepository {
 	return SpaceRepository{db}
 }
 
-func (r *SpaceRepository) CreateSpace(space *entity.Space) error {
+func (r *SpaceRepository) CreateSpace(space *model.Space) error {
 	return r.db.Create(space).Error
 }
 
-func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]entity.Space, int, error) {
-	var spaces []entity.Space
+func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]model.Space, int, error) {
+	var spaces []model.Space
 	err := r.db.
-		Model(entity.Space{}).
+		Model(model.Space{}).
 		Limit(pagin.Limit).
 		Offset(pagin.Offset).
 		Find(&spaces).Error
@@ -33,25 +32,25 @@ func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]entity.Space, 
 		return nil, 0, err
 	}
 	var totalElements int64
-	err = r.db.Model(entity.Space{}).Count(&totalElements).Error
+	err = r.db.Model(model.Space{}).Count(&totalElements).Error
 	if err != nil {
 		return nil, 0, err
 	}
 	return spaces, int(totalElements), err
 }
 
-func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.CategoryRequest) ([]entity.Space, int, error) {
-	var spaces []entity.Space
+func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.CategoryRequest) ([]model.Space, int, error) {
+	var spaces []model.Space
 	if cat.Kategori == "" && cat.Search == "" {
 		err := r.db.
-			Model(entity.Space{}).
+			Model(model.Space{}).
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
 		if err != nil {
 			return nil, 0, err
 		}
 	} else if cat.Search == "" {
 		err := r.db.
-			Model(entity.Space{}).
+			Model(model.Space{}).
 			Where("kategori = ?", cat.Kategori).
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
 		if err != nil {
@@ -59,7 +58,7 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 		}
 	} else if cat.Kategori == "" {
 		err := r.db.
-			Model(entity.Space{}).
+			Model(model.Space{}).
 			Where("nama LIKE ?", "%"+cat.Search+"%").
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
 		if err != nil {
@@ -67,7 +66,7 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 		}
 	} else {
 		err := r.db.
-			Model(entity.Space{}).
+			Model(model.Space{}).
 			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
 		if err != nil {
@@ -76,21 +75,21 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 	}
 
 	var totalElements int64
-	err := r.db.Model(entity.Space{}).Count(&totalElements).Error
+	err := r.db.Model(model.Space{}).Count(&totalElements).Error
 	if err != nil {
 		return nil, 0, err
 	}
 	return spaces, int(totalElements), err
 }
 
-func (r *SpaceRepository) GetSpaceByID(id uint) (entity.Space, error) {
-	space := entity.Space{}
-	err := r.db.Preload("Options").First(&space, id).Error
+func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
+	space := model.Space{}
+	err := r.db.Preload("Options").Preload("Options.Dates").First(&space, id).Error
 	return space, err
 }
 
 func (r *SpaceRepository) AddPicture(id uint, link string) error {
-	var space entity.Space
+	var space model.Space
 	err := r.db.First(&space, id).Error
 	if err != nil {
 		return err
@@ -103,8 +102,21 @@ func (r *SpaceRepository) AddPicture(id uint, link string) error {
 	return nil
 }
 
+func (r *SpaceRepository) GetAllPictures(id uint) ([]string, error) {
+	var spaces []model.Space
+	err := r.db.Model(model.Space{}).Where("owner_id = ?", id).Find(&spaces).Error
+	if err != nil {
+		return nil, err
+	}
+	var links []string
+	for _, space := range spaces {
+		links = append(links, space.Foto)
+	}
+	return links, nil
+}
+
 func (r *SpaceRepository) DeleteSpaceByID(id uint) error {
-	var space entity.Space
+	var space model.Space
 	err := r.db.Delete(&space, id).Error
 	return err
 }

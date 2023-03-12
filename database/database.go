@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"intern_BCC/entity"
+	"intern_BCC/model"
 	"log"
 	"os"
 
@@ -25,12 +25,12 @@ func InitDB() *gorm.DB {
 
 func AutoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
-		&entity.Customer{},
-		&entity.Owner{},
-		&entity.Space{},
-		&entity.Order{},
-		&entity.Review{},
-		&entity.Option{},
-		&entity.Date{},
+		&model.Customer{},
+		&model.Owner{},
+		&model.Space{},
+		&model.Order{},
+		&model.Review{},
+		&model.Option{},
+		&model.Date{},
 	)
 }

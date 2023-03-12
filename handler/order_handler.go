@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"intern_BCC/entity"
 	"intern_BCC/model"
 	"intern_BCC/repository"
 	"intern_BCC/sdk/response"
@@ -34,7 +33,7 @@ func (h *orderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	order := entity.Order{
+	order := model.Order{
 		CustomerID: claims.ID,
 		SpaceID:    request.ID,
 	}
@@ -77,4 +76,33 @@ func (h *orderHandler) GetOrderByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusForbidden, "access denied", err)
 	}
 	response.Success(c, http.StatusOK, "order found", order, nil)
+}
+
+func (h *orderHandler) CreateReview(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.CreateReviewRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.FailOrError(c, http.StatusUnprocessableEntity, "create review failed", err)
+		return
+	}
+	id := model.GetByIDRequest{}
+	if err := c.ShouldBindUri(&id); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+	order, _ := h.Repository.GetOrderByID(id.ID)
+
+	review := model.Review{
+		CustomerID: claims.ID,
+		SpaceID:    order.SpaceID,
+		OrderID:    id.ID,
+	}
+	err := h.Repository.CreateReview(&review)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "create review failed", err)
+		return
+	}
+	response.Success(c, http.StatusCreated, "review creation succeeded", nil, nil)
 }

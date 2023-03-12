@@ -34,11 +34,13 @@ func main() {
 	spaceRepo := repository.NewSpaceRepository(db)
 	ownerRepo := repository.NewOwnerRepository(db)
 	orderRepo := repository.NewOrderRepository(db)
+	optionRepo := repository.NewOptionRepository(db)
 
 	customerHandler := handler.NewCustomerHandler(&customerRepo)
 	spaceHandler := handler.NewSpaceHandler(&spaceRepo)
 	ownerHandler := handler.NewOwnerHandler(&ownerRepo)
 	orderHandler := handler.NewOrderHandler(&orderRepo)
+	optionHandler := handler.NewOptionHandler(&optionRepo)
 
 	// r.GET("/", ...)
 
@@ -59,25 +61,24 @@ func main() {
 	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
 	r.GET("/space/:id", spaceHandler.GetSpaceByID)
 	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
-
-	//---- Pemesanan ----
-
-	//---- Riwayat Pesanan ----
-	// r.GET("/orders", orderHandler.GetAllOrder)
-	// r.GET("/order/:id", orderHandler.GetOrderByID)
-	// r.POST("/order/:id/review", ...)
+	r.GET("/orders", middleware.JwtMiddleware(), orderHandler.GetAllOrder)
+	r.GET("/order/:id", middleware.JwtMiddleware(), orderHandler.GetOrderByID)
+	r.POST("/order/:id/review", middleware.JwtMiddleware(), orderHandler.CreateReview)
 
 	//---- Update Data Space ----
 	r.POST("/login/owner", ownerHandler.Login)
-	// r.GET("/owner", ...)
-	// r.GET("/owner/:id", ...)		ID Space
-	// r.POST("/owner/:id", ...)
-	r.POST("/owner/:id/picture", middleware.JwtMiddleware(), spaceHandler.AddPicture)
+	// r.GET("/owner/spaces", ...)
+	// r.GET("/owner/space/:id", ...)
+	// r.POST("/owner/space/:id", ...)
+	r.POST("/owner/space/:id/picture", middleware.JwtMiddleware(), spaceHandler.AddPicture)
+	r.GET("/owner/pictures", middleware.JwtMiddleware(), spaceHandler.GetAllPictures)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)
 	r.POST("/space", spaceHandler.CreateSpace)
-	// r.DELETE("/place/:id", placeHandler.DeletePlaceByID)
+	r.DELETE("/space/:id", spaceHandler.DeleteSpaceByID)
+	r.POST("/space/:id/option", optionHandler.CreateOption)
+	// r.POST("/space/:id/date", ...)
 
 	r.Run(":" + port)
 }

@@ -3,7 +3,6 @@ package crypto
 import (
 	"errors"
 	"fmt"
-	"intern_BCC/entity"
 	"intern_BCC/model"
 	"os"
 	"time"
@@ -11,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func GenerateToken(payload entity.Customer) (string, error) {
+func GenerateToken(payload model.Customer) (string, error) {
 	expStr := os.Getenv("JWT_EXP")
 	var exp time.Duration
 	exp, err := time.ParseDuration(expStr)
@@ -26,7 +25,7 @@ func GenerateToken(payload entity.Customer) (string, error) {
 	return tokenJwt, nil
 }
 
-func GenerateOwnerToken(payload entity.Owner) (string, error) {
+func GenerateOwnerToken(payload model.Owner) (string, error) {
 	expStr := os.Getenv("JWT_EXP")
 	var exp time.Duration
 	exp, err := time.ParseDuration(expStr)
