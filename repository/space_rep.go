@@ -3,7 +3,6 @@ package repository
 import (
 	"intern_BCC/model"
 
-	supabasestorageuploader "github.com/adityarizkyramadhan/supabase-storage-uploader"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
@@ -84,35 +83,8 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 
 func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
 	space := model.Space{}
-	err := r.db.Preload("Options").Preload("Options.Dates").First(&space, id).Error
+	err := r.db.Preload("Facilities").Preload("Options").Preload("Options.Dates").First(&space, id).Error
 	return space, err
-}
-
-func (r *SpaceRepository) AddPicture(id uint, link string) error {
-	var space model.Space
-	err := r.db.First(&space, id).Error
-	if err != nil {
-		return err
-	}
-	space.Foto = link
-	err = r.db.Save(&space).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *SpaceRepository) GetAllPictures(id uint) ([]string, error) {
-	var spaces []model.Space
-	err := r.db.Model(model.Space{}).Where("owner_id = ?", id).Find(&spaces).Error
-	if err != nil {
-		return nil, err
-	}
-	var links []string
-	for _, space := range spaces {
-		links = append(links, space.Foto)
-	}
-	return links, nil
 }
 
 func (r *SpaceRepository) DeleteSpaceByID(id uint) error {
@@ -130,23 +102,4 @@ func (h *SpaceRepository) BindParam(c *gin.Context, param interface{}) error {
 		return err
 	}
 	return c.ShouldBindWith(param, binding.Query)
-}
-
-var supClient = supabasestorageuploader.NewSupabaseClient(
-	"https://hszlytnrahmcgiyjovbp.supabase.co",
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzemx5dG5yYWhtY2dpeWpvdmJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzg0NDU0NzMsImV4cCI6MTk5NDAyMTQ3M30.xg_QyHoaT-XjUPRVi8NE1p_CpBOS86F1ip0cuBYwMgA",
-	"foto",
-	"",
-)
-
-func (h *SpaceRepository) Upload(c *gin.Context) (string, error) {
-	file, err := c.FormFile("foto")
-	if err != nil {
-		return "", err
-	}
-	link, err := supClient.Upload(file)
-	if err != nil {
-		return "", err
-	}
-	return link, nil
 }

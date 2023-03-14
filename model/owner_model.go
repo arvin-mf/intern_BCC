@@ -18,3 +18,11 @@ type CreateOwnerRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Whatsapp string `json:"whatsapp" binding:"required"`
 }
+
+type GetByCatRequest struct {
+	Kategori int `uri:"kategori" binding:"required"`
+}
+
+type AddFacilRequest struct {
+	Fasil []string `json:"fasil"`
+}

@@ -40,7 +40,7 @@ func (h *ownerHandler) Login(c *gin.Context) {
 	var request model.Login
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "bad request", err)
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
 		return
 	}
 	owner, err := h.Repository.FindByEmail(request.Email)
@@ -62,6 +62,174 @@ func (h *ownerHandler) Login(c *gin.Context) {
 	response.Success(c, http.StatusOK, "login success", gin.H{
 		"token": tokenJwt,
 	}, nil)
+}
+
+func (h *ownerHandler) GetOwnerSpaces(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	spaces, err := h.Repository.GetOwnerSpaces(claims.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "spaces not found", err)
+		return
+	}
+	var spaceIDs []uint
+	for _, space := range spaces {
+		spaceIDs = append(spaceIDs, space.ID)
+	}
+	reviews, err := h.Repository.GetOwnerReviews(spaceIDs)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
+		return
+	}
+
+	response.Success(c, http.StatusOK, "spaces found", gin.H{
+		"spaces":  spaces,
+		"reviews": reviews,
+	}, nil)
+}
+
+func (h *ownerHandler) GetOwnerSpaceByCat(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.GetByCatRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
+		return
+	}
+
+	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "space found", space, nil)
+}
+
+func (h *ownerHandler) UpdateDescription(c *gin.Context) {
+
+}
+
+func (h *ownerHandler) AddFacilities(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.GetByCatRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
+		return
+	}
+
+	var facils model.AddFacilRequest
+	err := c.ShouldBindJSON(&facils)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
+		return
+	}
+
+	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+
+	err = h.Repository.AddFacilities(space.ID, facils.Fasil)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "update description succeeded", nil, nil)
+}
+
+func (h *ownerHandler) SwitchAvailability(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.GetByIDRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+		return
+	}
+
+	date, err := h.Repository.GetDateByID(request.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "date not found", err)
+		return
+	}
+	option, err := h.Repository.GetOptionByID(date.OptionID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "option not found", err)
+		return
+	}
+	space, err := h.Repository.GetSpaceByID(option.SpaceID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+	owner, err := h.Repository.GetOwnerByID(space.OwnerID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "owner not found", err)
+		return
+	}
+	if claims.ID != owner.ID {
+		response.FailOrError(c, http.StatusForbidden, "access denied", err)
+		return
+	}
+
+	statusNow, err := h.Repository.SwitchAvailability(date.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "switch failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "switch availability succeeded", statusNow, nil)
+}
+
+func (h *ownerHandler) AddPicture(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+	if claims.Role != "owner" {
+		msg := "access denied"
+		response.FailOrError(c, http.StatusForbidden, msg, errors.New(msg))
+		return
+	}
+	request := model.GetByCatRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+	if space.OwnerID != claims.ID {
+		response.FailOrError(c, http.StatusForbidden, "access denied", err)
+		return
+	}
+	link, err := h.Repository.Upload(c)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
+		return
+	}
+	err = h.Repository.AddPicture(space.ID, link)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "upload file failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "file uploaded", nil, nil)
+}
+
+func (h *ownerHandler) GetAllPictures(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	data, err := h.Repository.GetAllPictures(claims.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "get pictures failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "records found", data, nil)
 }
 
 func (h *ownerHandler) GetAllOwner(c *gin.Context) {

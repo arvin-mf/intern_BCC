@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"errors"
 	"intern_BCC/model"
 	"intern_BCC/repository"
 	"intern_BCC/sdk/response"
@@ -103,47 +102,4 @@ func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, "delete space success", nil, nil)
-}
-
-func (h *spaceHandler) AddPicture(c *gin.Context) {
-	claimsTemp, _ := c.Get("user")
-	claims := claimsTemp.(model.UserClaims)
-	if claims.Role != "owner" {
-		msg := "access denied"
-		response.FailOrError(c, http.StatusForbidden, msg, errors.New(msg))
-		return
-	}
-	request := model.GetByIDRequest{}
-	if err := c.ShouldBindUri(&request); err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
-		return
-	}
-	space, err := h.Repository.GetSpaceByID(request.ID)
-	if space.OwnerID != claims.ID {
-		response.FailOrError(c, http.StatusForbidden, "access denied", err)
-		return
-	}
-	link, err := h.Repository.Upload(c)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
-		return
-	}
-	err = h.Repository.AddPicture(request.ID, link)
-	if err != nil {
-		response.FailOrError(c, http.StatusInternalServerError, "upload file failed", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "file uploaded", nil, nil)
-}
-
-func (h *spaceHandler) GetAllPictures(c *gin.Context) {
-	claimsTemp, _ := c.Get("user")
-	claims := claimsTemp.(model.UserClaims)
-
-	data, err := h.Repository.GetAllPictures(claims.ID)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "get pictures failed", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "records found", data, nil)
 }

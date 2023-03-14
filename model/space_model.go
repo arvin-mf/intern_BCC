@@ -8,19 +8,26 @@ import (
 
 type Space struct {
 	gorm.Model
-	Nama      string   `gorm:"type:VARCHAR(50); NOT NULL" json:"nama"`
-	Kategori  string   `gorm:"type:VARCHAR(20); NOT NULL" json:"kategori"`
-	Deskripsi string   `gorm:"type:LONGTEXT;" json:"deskripsi"`
-	Alamat    string   `gorm:"type:LONGTEXT; NOT NULL" json:"alamat"`
-	Harga     int      `json:"harga"`
-	Periode   int      `json:"periode"`
-	Foto      string   `gorm:"type:LONGTEXT" json:"foto"`
-	Rating    float64  `json:"rating"`
-	OwnerID   uint     `json:"owner_id"`
-	Options   []Option `json:"options"`
+	Nama       string     `gorm:"type:VARCHAR(50); NOT NULL" json:"nama"`
+	Kategori   string     `gorm:"type:VARCHAR(20); NOT NULL" json:"kategori"`
+	Deskripsi  string     `gorm:"type:LONGTEXT" json:"deskripsi"`
+	Alamat     string     `gorm:"type:LONGTEXT NOT NULL" json:"alamat"`
+	Facilities []Facility `json:"facilities"`
+	Harga      int        `json:"harga"`
+	Periode    int        `json:"periode"`
+	Foto       string     `gorm:"type:LONGTEXT" json:"foto"`
+	Rating     float64    `json:"rating"`
+	OwnerID    uint       `json:"owner_id"`
+	Options    []Option   `json:"options"`
 }
 
 var Category []string = []string{"private", "coworking", "meeting room"}
+
+type Facility struct {
+	gorm.Model
+	Ket     string `gorm:"type:TEXT" json:"ket"`
+	SpaceID uint   `json:"space_id"`
+}
 
 type Option struct {
 	gorm.Model
@@ -31,9 +38,8 @@ type Option struct {
 
 type Date struct {
 	gorm.Model
-	Tanggal  time.Time `json:"tanggal"`
+	Tanggal  time.Time `gorm:"type:DATE" json:"tanggal"`
 	Tersedia bool      `json:"tersedia"`
-	SpaceID  uint      `json:"space_id"`
 	OptionID uint      `json:"option_id"`
 }
 

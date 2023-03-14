@@ -98,6 +98,8 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		CustomerID: claims.ID,
 		SpaceID:    order.SpaceID,
 		OrderID:    id.ID,
+		Ulasan:     request.Ulasan,
+		Rating:     request.Rating,
 	}
 	err := h.Repository.CreateReview(&review)
 	if err != nil {
