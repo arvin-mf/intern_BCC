@@ -55,7 +55,7 @@ func (r *OwnerRepository) GetOwnerReviews(id []uint) ([]model.Review, error) {
 func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.Space, error) {
 	var space model.Space
 	err := r.db.
-		Preload("Options").Preload("Options.Dates").
+		Preload("Facilities").Preload("Options").Preload("Options.Dates").
 		Where("owner_id = ? AND kategori = ?", ownerID, model.Category[category-1]).
 		First(&space).Error
 	return space, err
@@ -68,6 +68,17 @@ func (r *OwnerRepository) UpdateDescription(id uint, desc string) error {
 		return err
 	}
 	space.Deskripsi = desc
+	err = r.db.Save(&space).Error
+	return err
+}
+
+func (r *OwnerRepository) UpdateCapacity(id uint, capac int) error {
+	var space model.Space
+	err := r.db.First(&space, id).Error
+	if err != nil {
+		return err
+	}
+	space.Kapasitas = capac
 	err = r.db.Save(&space).Error
 	return err
 }
@@ -144,6 +155,7 @@ func (r *OwnerRepository) GetAllPictures(id uint) ([]string, error) {
 	for _, space := range spaces {
 		links = append(links, space.Foto)
 	}
+
 	return links, err
 }
 

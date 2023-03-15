@@ -63,5 +63,7 @@ func (pp *PaginParam) ProcessPagin(totalElements int) {
 		} else {
 			pp.CurrentElements = pp.TotalElements - (pp.TotalPages-1)*pp.Limit
 		}
+	} else {
+		pp.CurrentElements = pp.Limit
 	}
 }

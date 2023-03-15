@@ -22,62 +22,65 @@ func (r *SpaceRepository) CreateSpace(space *model.Space) error {
 
 func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]model.Space, int, error) {
 	var spaces []model.Space
-	err := r.db.
+	result := r.db.
 		Model(model.Space{}).
 		Limit(pagin.Limit).
 		Offset(pagin.Offset).
-		Find(&spaces).Error
+		Find(&spaces)
+	err := result.Error
 	if err != nil {
 		return nil, 0, err
 	}
 	var totalElements int64
-	err = r.db.Model(model.Space{}).Count(&totalElements).Error
-	if err != nil {
-		return nil, 0, err
-	}
+	totalElements = result.RowsAffected
 	return spaces, int(totalElements), err
 }
 
 func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.CategoryRequest) ([]model.Space, int, error) {
 	var spaces []model.Space
+	var err error
+	var totalElements int64
 	if cat.Kategori == "" && cat.Search == "" {
-		err := r.db.
+		result := r.db.
 			Model(model.Space{}).
-			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
+			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
+		err = result.Error
+		totalElements = result.RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else if cat.Search == "" {
-		err := r.db.
+		result := r.db.
 			Model(model.Space{}).
 			Where("kategori = ?", cat.Kategori).
-			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
+			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
+		err = result.Error
+		totalElements = result.RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else if cat.Kategori == "" {
-		err := r.db.
+		result := r.db.
 			Model(model.Space{}).
 			Where("nama LIKE ?", "%"+cat.Search+"%").
-			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
+			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
+		err = result.Error
+		totalElements = result.RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else {
-		err := r.db.
+		result := r.db.
 			Model(model.Space{}).
 			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
-			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces).Error
+			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
+		err = result.Error
+		totalElements = result.RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	}
 
-	var totalElements int64
-	err := r.db.Model(model.Space{}).Count(&totalElements).Error
-	if err != nil {
-		return nil, 0, err
-	}
 	return spaces, int(totalElements), err
 }
 

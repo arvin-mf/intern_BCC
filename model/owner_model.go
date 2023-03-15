@@ -30,3 +30,7 @@ type AddFacilRequest struct {
 type DescriptionRequest struct {
 	Deskripsi string `json:"deskripsi"`
 }
+
+type CapacityRequest struct {
+	Kapasitas int `json:"kapasitas"`
+}

@@ -13,6 +13,7 @@ type Space struct {
 	Deskripsi  string     `gorm:"type:LONGTEXT" json:"deskripsi"`
 	Alamat     string     `gorm:"type:LONGTEXT NOT NULL" json:"alamat"`
 	Facilities []Facility `json:"facilities"`
+	Kapasitas  int        `json:"kapasitas"`
 	Harga      int        `json:"harga"`
 	Periode    int        `json:"periode"`
 	Foto       string     `gorm:"type:LONGTEXT" json:"foto"`

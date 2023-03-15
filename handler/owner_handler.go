@@ -139,6 +139,38 @@ func (h *ownerHandler) UpdateDescription(c *gin.Context) {
 	response.Success(c, http.StatusOK, "description updated", nil, nil)
 }
 
+func (h *ownerHandler) UpdateCapacity(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.CapacityRequest{}
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
+		return
+	}
+
+	cat := model.GetByCatRequest{}
+	err = c.ShouldBindUri(&cat)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+
+	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+
+	err = h.Repository.UpdateCapacity(space.ID, request.Kapasitas)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update capacity failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "capacity updated", nil, nil)
+}
+
 func (h *ownerHandler) AddFacilities(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
