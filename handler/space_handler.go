@@ -90,7 +90,16 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusOK, "space found", space, nil)
+	reviews, err := h.Repository.GetReviewsBySpaceID(request.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
+		return
+	}
+
+	response.Success(c, http.StatusOK, "space found", gin.H{
+		"space":   space,
+		"reviews": reviews,
+	}, nil)
 }
 
 func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {

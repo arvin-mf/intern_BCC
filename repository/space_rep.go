@@ -90,6 +90,15 @@ func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
 	return space, err
 }
 
+func (r *SpaceRepository) GetReviewsBySpaceID(id uint) ([]model.Review, error) {
+	var reviews []model.Review
+	err := r.db.Model(model.Review{}).Where("space_id = ?", id).Find(&reviews).Error
+	if err != nil {
+		return nil, err
+	}
+	return reviews, err
+}
+
 func (r *SpaceRepository) GetCustomerByID(id uint) (model.Customer, error) {
 	customer := model.Customer{}
 	err := r.db.First(&customer, id).Error

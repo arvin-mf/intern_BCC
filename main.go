@@ -48,7 +48,7 @@ func main() {
 	r.POST("/register/customer", customerHandler.CreateCustomer)
 	r.POST("/login", customerHandler.Login)
 
-	//---- Memilih Working Space ----
+	//---- Customer Flow ----
 	r.GET("/spaces", spaceHandler.GetAllSpace)
 	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
 	r.GET("/space/:id", spaceHandler.GetSpaceByID)
@@ -58,7 +58,7 @@ func main() {
 	r.GET("/order/:id", middleware.JwtMiddleware(), orderHandler.GetOrderByID)
 	r.POST("/order/:id/review", middleware.JwtMiddleware(), orderHandler.CreateReview)
 
-	//---- Update Data Space ----
+	//---- Owner Flow ----
 	r.POST("/login/owner", ownerHandler.Login)
 	r.GET("/owner/spaces", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaces)
 	r.GET("/owner/space/:kategori", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaceByCat)

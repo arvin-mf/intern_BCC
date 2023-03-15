@@ -104,7 +104,17 @@ func (h *ownerHandler) GetOwnerSpaceByCat(c *gin.Context) {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "space found", space, nil)
+
+	reviews, err := h.Repository.GetReviewsBySpaceID(space.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
+		return
+	}
+
+	response.Success(c, http.StatusOK, "space found", gin.H{
+		"space":   space,
+		"reviews": reviews,
+	}, nil)
 }
 
 func (h *ownerHandler) UpdateDescription(c *gin.Context) {

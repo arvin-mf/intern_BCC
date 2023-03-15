@@ -61,6 +61,15 @@ func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.
 	return space, err
 }
 
+func (r *OwnerRepository) GetReviewsBySpaceID(id uint) ([]model.Review, error) {
+	var reviews []model.Review
+	err := r.db.Model(model.Review{}).Where("space_id = ?", id).Find(&reviews).Error
+	if err != nil {
+		return nil, err
+	}
+	return reviews, err
+}
+
 func (r *OwnerRepository) UpdateDescription(id uint, desc string) error {
 	var space model.Space
 	err := r.db.First(&space, id).Error
