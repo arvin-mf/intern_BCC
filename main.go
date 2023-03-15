@@ -49,9 +49,9 @@ func main() {
 	r.POST("/login", customerHandler.Login)
 
 	//---- Memilih Working Space ----
-	r.GET("/spaces", middleware.JwtSemiMiddleware(), spaceHandler.GetAllSpace)
-	r.GET("/spaces/find", middleware.JwtSemiMiddleware(), spaceHandler.GetSpaceByParam)
-	r.GET("/space/:id", middleware.JwtSemiMiddleware(), spaceHandler.GetSpaceByID)
+	r.GET("/spaces", spaceHandler.GetAllSpace)
+	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
+	r.GET("/space/:id", spaceHandler.GetSpaceByID)
 	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
 
 	r.GET("/orders", middleware.JwtMiddleware(), orderHandler.GetAllOrder)
@@ -62,7 +62,7 @@ func main() {
 	r.POST("/login/owner", ownerHandler.Login)
 	r.GET("/owner/spaces", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaces)
 	r.GET("/owner/space/:kategori", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaceByCat)
-	r.POST("/owner/space/:kategori/description", middleware.JwtMiddleware(), ownerHandler.UpdateDescription)
+	r.PATCH("/owner/space/:kategori/description", middleware.JwtMiddleware(), ownerHandler.UpdateDescription)
 	r.POST("/owner/space/:kategori/facilities", middleware.JwtMiddleware(), ownerHandler.AddFacilities)
 	r.POST("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
 	r.POST("/owner/space/:kategori/picture", middleware.JwtMiddleware(), ownerHandler.AddPicture)
