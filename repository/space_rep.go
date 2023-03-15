@@ -87,6 +87,12 @@ func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
 	return space, err
 }
 
+func (r *SpaceRepository) GetCustomerByID(id uint) (model.Customer, error) {
+	customer := model.Customer{}
+	err := r.db.First(&customer, id).Error
+	return customer, err
+}
+
 func (r *SpaceRepository) DeleteSpaceByID(id uint) error {
 	var space model.Space
 	err := r.db.Delete(&space, id).Error

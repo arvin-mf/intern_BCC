@@ -106,5 +106,22 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "create review failed", err)
 		return
 	}
+
+	reviews, count, err := h.Repository.GetReviewsBySpaceID(order.SpaceID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
+		return
+	}
+	var newRating float64
+	for _, rating := range reviews {
+		newRating += float64(rating.Rating)
+	}
+	newRating /= float64(count)
+	err = h.Repository.UpdateRating(order.SpaceID, newRating)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update rating failed", err)
+		return
+	}
+
 	response.Success(c, http.StatusCreated, "review creation succeeded", nil, nil)
 }

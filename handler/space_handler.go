@@ -40,6 +40,12 @@ func (h *spaceHandler) CreateSpace(c *gin.Context) {
 }
 
 func (h *spaceHandler) GetAllSpace(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	var claims model.UserClaims
+	if claimsTemp != nil {
+		claims = claimsTemp.(model.UserClaims)
+	}
+
 	var spaceParam model.PaginParam
 	if err := h.Repository.BindParam(c, &spaceParam); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
@@ -52,10 +58,40 @@ func (h *spaceHandler) GetAllSpace(c *gin.Context) {
 		return
 	}
 	spaceParam.ProcessPagin(totalElements)
-	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
+
+	var identities model.Identities
+	if claimsTemp == nil {
+		identities = model.Identities{
+			ID:    0,
+			Nama:  "",
+			Email: "",
+		}
+	} else {
+		customer, err := h.Repository.GetCustomerByID(claims.ID)
+		if err != nil {
+			response.FailOrError(c, http.StatusNotFound, "customer not found", err)
+			return
+		}
+		identities = model.Identities{
+			ID:    customer.ID,
+			Nama:  customer.Nama,
+			Email: customer.Email,
+		}
+	}
+
+	response.Success(c, http.StatusOK, "Spaces found", gin.H{
+		"iden":   identities,
+		"spaces": spaces,
+	}, &spaceParam)
 }
 
 func (h *spaceHandler) GetSpaceByParam(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	var claims model.UserClaims
+	if claimsTemp != nil {
+		claims = claimsTemp.(model.UserClaims)
+	}
+
 	var request model.CategoryRequest
 	if err := h.Repository.BindParam(c, &request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request body", err)
@@ -73,21 +109,75 @@ func (h *spaceHandler) GetSpaceByParam(c *gin.Context) {
 		return
 	}
 	spaceParam.ProcessPagin(totalElements)
-	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
+
+	var identities model.Identities
+	if claimsTemp == nil {
+		identities = model.Identities{
+			ID:    0,
+			Nama:  "",
+			Email: "",
+		}
+	} else {
+		customer, err := h.Repository.GetCustomerByID(claims.ID)
+		if err != nil {
+			response.FailOrError(c, http.StatusNotFound, "customer not found", err)
+			return
+		}
+		identities = model.Identities{
+			ID:    customer.ID,
+			Nama:  customer.Nama,
+			Email: customer.Email,
+		}
+	}
+
+	response.Success(c, http.StatusOK, "Spaces found", gin.H{
+		"iden":   identities,
+		"spaces": spaces,
+	}, &spaceParam)
 }
 
 func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	var claims model.UserClaims
+	if claimsTemp != nil {
+		claims = claimsTemp.(model.UserClaims)
+	}
+
 	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
-	owner, err := h.Repository.GetSpaceByID(request.ID)
+	space, err := h.Repository.GetSpaceByID(request.ID)
 	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "owner not found", err)
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "owner found", owner, nil)
+
+	var identities model.Identities
+	if claimsTemp == nil {
+		identities = model.Identities{
+			ID:    0,
+			Nama:  "",
+			Email: "",
+		}
+	} else {
+		customer, err := h.Repository.GetCustomerByID(claims.ID)
+		if err != nil {
+			response.FailOrError(c, http.StatusNotFound, "customer not found", err)
+			return
+		}
+		identities = model.Identities{
+			ID:    customer.ID,
+			Nama:  customer.Nama,
+			Email: customer.Email,
+		}
+	}
+
+	response.Success(c, http.StatusOK, "space found", gin.H{
+		"iden":   identities,
+		"spaces": space,
+	}, nil)
 }
 
 func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {

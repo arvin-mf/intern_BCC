@@ -16,7 +16,9 @@ type Space struct {
 	Harga      int        `json:"harga"`
 	Periode    int        `json:"periode"`
 	Foto       string     `gorm:"type:LONGTEXT" json:"foto"`
-	Rating     float64    `json:"rating"`
+	Lat        float64    `json:"lat"`
+	Lon        float64    `json:"lon"`
+	Rating     float64    `gorm:"default:5.0" json:"rating"`
 	OwnerID    uint       `json:"owner_id"`
 	Options    []Option   `json:"options"`
 }
@@ -64,4 +66,9 @@ type CreateDateRequest struct {
 type CategoryRequest struct {
 	Kategori string `json:"nama" form:"kategori"`
 	Search   string `json:"search" form:"search"`
+}
+
+type PictureRequest struct {
+	SpaceID uint   `json:"space_id" binding:"required"`
+	Link    string `json:"link" binding:"required"`
 }

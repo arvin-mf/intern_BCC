@@ -23,6 +23,12 @@ func NewUserClaims(id uint, role string, exp time.Duration) UserClaims {
 	}
 }
 
+type Identities struct {
+	ID    uint   `json:"id"`
+	Nama  string `json:"nama"`
+	Email string `json:"email"`
+}
+
 type GetByIDRequest struct {
 	ID uint `uri:"id" binding:"required"`
 }

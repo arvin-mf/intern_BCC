@@ -33,3 +33,26 @@ func (r *OrderRepository) GetOrderByID(id uint) (model.Order, error) {
 func (r *OrderRepository) CreateReview(review *model.Review) error {
 	return r.db.Create(review).Error
 }
+
+func (r *OrderRepository) GetReviewsBySpaceID(spaceID uint) ([]model.Review, int, error) {
+	var reviews []model.Review
+	err := r.db.Where("space_id = ?", spaceID).Find(&reviews).Error
+
+	var count int64
+	err = r.db.Model(model.Review{}).Where("space_id = ?", spaceID).Count(&count).Error
+	return reviews, int(count), err
+}
+
+func (r *OrderRepository) GetSpaceByID(id uint) (model.Space, error) {
+	space := model.Space{}
+	err := r.db.First(&space, id).Error
+	return space, err
+}
+
+func (r *OrderRepository) UpdateRating(spaceID uint, newRating float64) error {
+	space := model.Space{}
+	_ = r.db.First(&space, spaceID).Error
+	space.Rating = newRating
+	err := r.db.Save(&space).Error
+	return err
+}

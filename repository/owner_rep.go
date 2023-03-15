@@ -61,15 +61,15 @@ func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.
 	return space, err
 }
 
-func (r *OwnerRepository) SwitchAvailability(id uint) (bool, error) {
-	var date model.Date
-	err := r.db.First(&date, id).Error
+func (r *OwnerRepository) UpdateDescription(id uint, desc string) error {
+	var space model.Space
+	err := r.db.First(&space, id).Error
 	if err != nil {
-		return false, err
+		return err
 	}
-	date.Tersedia = !date.Tersedia
-	err = r.db.Save(&date).Error
-	return date.Tersedia, err
+	space.Deskripsi = desc
+	err = r.db.Save(&space).Error
+	return err
 }
 
 func (r *OwnerRepository) AddFacilities(id uint, facils []string) error {
@@ -90,6 +90,17 @@ func (r *OwnerRepository) AddFacilities(id uint, facils []string) error {
 		}
 	}
 	return err
+}
+
+func (r *OwnerRepository) SwitchAvailability(id uint) (bool, error) {
+	var date model.Date
+	err := r.db.First(&date, id).Error
+	if err != nil {
+		return false, err
+	}
+	date.Tersedia = !date.Tersedia
+	err = r.db.Save(&date).Error
+	return date.Tersedia, err
 }
 
 func (r *OwnerRepository) GetSpaceByID(id uint) (model.Space, error) {

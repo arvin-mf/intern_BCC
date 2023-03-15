@@ -26,3 +26,7 @@ type GetByCatRequest struct {
 type AddFacilRequest struct {
 	Fasil []string `json:"fasil"`
 }
+
+type DescriptionRequest struct {
+	Deskripsi string `json:"deskripsi"`
+}

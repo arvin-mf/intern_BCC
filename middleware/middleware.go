@@ -32,3 +32,22 @@ func JwtMiddleware() gin.HandlerFunc {
 		c.Set("user", claims)
 	}
 }
+
+func JwtSemiMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authorization := c.Request.Header.Get("Authorization")
+		if !strings.HasPrefix(authorization, "Bearer ") {
+			c.Set("user", nil)
+		} else {
+			tokenJwt := authorization[7:]
+			claims := model.UserClaims{}
+			jwtKey := os.Getenv("secret_key")
+			if err := sdk_jwt.DecodeToken(tokenJwt, &claims, jwtKey); err != nil {
+				c.Abort()
+				response.FailOrError(c, http.StatusUnauthorized, "unauthorized", err)
+				return
+			}
+			c.Set("user", claims)
+		}
+	}
+}
