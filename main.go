@@ -70,6 +70,7 @@ func main() {
 	r.GET("/owner/pictures", middleware.JwtMiddleware(), ownerHandler.GetAllPictures)
 
 	r.POST("/pic", ownerHandler.AddPic)
+	r.PATCH("/loc", spaceHandler.InputLocation)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)

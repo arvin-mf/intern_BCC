@@ -2,6 +2,7 @@ package repository
 
 import (
 	"intern_BCC/model"
+	"math"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -111,13 +112,34 @@ func (r *SpaceRepository) DeleteSpaceByID(id uint) error {
 	return err
 }
 
-func (h *SpaceRepository) BindBody(c *gin.Context, body interface{}) interface{} {
+func (r *SpaceRepository) BindBody(c *gin.Context, body interface{}) interface{} {
 	return c.ShouldBindWith(body, binding.JSON)
 }
 
-func (h *SpaceRepository) BindParam(c *gin.Context, param interface{}) error {
+func (r *SpaceRepository) BindParam(c *gin.Context, param interface{}) error {
 	if err := c.ShouldBindUri(param); err != nil {
 		return err
 	}
 	return c.ShouldBindWith(param, binding.Query)
+}
+
+func (r *SpaceRepository) UpdateDistance(spaces []model.Space, loc model.UserLocation) error {
+	var err error
+	for _, space := range spaces {
+		space.Jarak = 111.111 * math.Sqrt((space.Lat-loc.Lat)*(space.Lat-loc.Lat)+(space.Lon-loc.Lon)*(space.Lon-loc.Lon))
+		err = r.db.Save(&space).Error
+	}
+	return err
+}
+
+func (r *SpaceRepository) InputLocation(input model.InputLocation) error {
+	var space model.Space
+	err := r.db.First(&space, input.ID).Error
+	if err != nil {
+		return err
+	}
+	space.Lat = input.Lat
+	space.Lon = input.Lon
+	err = r.db.Save(&space).Error
+	return err
 }

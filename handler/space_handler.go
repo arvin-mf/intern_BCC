@@ -53,6 +53,16 @@ func (h *spaceHandler) GetAllSpace(c *gin.Context) {
 	}
 	spaceParam.ProcessPagin(totalElements)
 
+	location := model.UserLocation{
+		Lat: -7.9537341,
+		Lon: 112.609102,
+	}
+	err = h.Repository.UpdateDistance(spaces, location)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update distance failed", err)
+		return
+	}
+
 	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
 }
 
@@ -114,4 +124,19 @@ func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, "delete space success", nil, nil)
+}
+
+func (h *spaceHandler) InputLocation(c *gin.Context) {
+	request := model.InputLocation{}
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
+		return
+	}
+	err = h.Repository.InputLocation(request)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "input location failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "input location succeeded", nil, nil)
 }
