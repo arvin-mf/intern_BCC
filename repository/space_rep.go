@@ -23,6 +23,8 @@ func (r *SpaceRepository) CreateSpace(space *model.Space) error {
 
 func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]model.Space, int, error) {
 	var spaces []model.Space
+	var totalElements int64
+	totalElements = r.db.Model(model.Space{}).Find(&spaces).RowsAffected
 	result := r.db.
 		Model(model.Space{}).
 		Limit(pagin.Limit).
@@ -32,8 +34,6 @@ func (r *SpaceRepository) GetAllSpace(pagin *model.PaginParam) ([]model.Space, i
 	if err != nil {
 		return nil, 0, err
 	}
-	var totalElements int64
-	totalElements = r.db.Model(model.Space{}).Find(&spaces).RowsAffected
 	return spaces, int(totalElements), err
 }
 
@@ -42,45 +42,45 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 	var err error
 	var totalElem int64
 	if cat.Kategori == "" && cat.Search == "" {
+		totalElem = r.db.Model(model.Space{}).Find(&spaces).RowsAffected
 		result := r.db.
 			Model(model.Space{}).
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
 		err = result.Error
-		totalElem = r.db.Model(model.Space{}).Find(&spaces).RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else if cat.Search == "" {
+		totalElem = r.db.Model(model.Space{}).Where("kategori = ?", cat.Kategori).Find(&spaces).RowsAffected
 		result := r.db.
 			Model(model.Space{}).
 			Where("kategori = ?", cat.Kategori).
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
 		err = result.Error
-		totalElem = r.db.Model(model.Space{}).Where("kategori = ?", cat.Kategori).Find(&spaces).RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else if cat.Kategori == "" {
+		totalElem = r.db.Model(model.Space{}).
+			Where("nama LIKE ?", "%"+cat.Search+"%").
+			Find(&spaces).RowsAffected
 		result := r.db.
 			Model(model.Space{}).
 			Where("nama LIKE ?", "%"+cat.Search+"%").
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
 		err = result.Error
-		totalElem = r.db.Model(model.Space{}).
-			Where("nama LIKE ?", "%"+cat.Search+"%").
-			Find(&spaces).RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}
 	} else {
+		totalElem = r.db.Model(model.Space{}).
+			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
+			Find(&spaces).RowsAffected
 		result := r.db.
 			Model(model.Space{}).
 			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
 			Limit(pagin.Limit).Offset(pagin.Offset).Find(&spaces)
 		err = result.Error
-		totalElem = r.db.Model(model.Space{}).
-			Where("kategori = ? AND nama LIKE ?", cat.Kategori, "%"+cat.Search+"%").
-			Find(&spaces).RowsAffected
 		if err != nil {
 			return nil, 0, err
 		}

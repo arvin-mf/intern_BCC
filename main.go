@@ -67,6 +67,7 @@ func main() {
 	r.POST("/owner/space/:kategori/facilities", middleware.JwtMiddleware(), ownerHandler.AddFacilities)
 	r.POST("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
 	r.POST("/owner/space/:kategori/picture", middleware.JwtMiddleware(), ownerHandler.AddPicture)
+	r.POST("/owner/picture", middleware.JwtMiddleware(), ownerHandler.AddGalleryPicture)
 	r.GET("/owner/pictures", middleware.JwtMiddleware(), ownerHandler.GetAllPictures)
 
 	r.POST("/pic", ownerHandler.AddPic)

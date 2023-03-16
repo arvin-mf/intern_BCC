@@ -153,16 +153,28 @@ func (r *OwnerRepository) AddPicture(id uint, link string) error {
 	return err
 }
 
+func (r *OwnerRepository) AddGalleryPicture(picture *model.Picture) error {
+	return r.db.Create(&picture).Error
+}
+
 func (r *OwnerRepository) GetAllPictures(id uint) ([]string, error) {
 	var spaces []model.Space
 	err := r.db.Model(model.Space{}).Where("owner_id = ?", id).Find(&spaces).Error
 	if err != nil {
 		return nil, err
 	}
-
 	var links []string
 	for _, space := range spaces {
 		links = append(links, space.Foto)
+	}
+
+	var pictures []model.Picture
+	err = r.db.Model(model.Picture{}).Where("owner_id = ?", id).Find(&pictures).Error
+	if err != nil {
+		return nil, err
+	}
+	for _, pic := range pictures {
+		links = append(links, pic.Link)
 	}
 
 	return links, err

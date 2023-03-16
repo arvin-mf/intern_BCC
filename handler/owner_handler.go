@@ -290,16 +290,37 @@ func (h *ownerHandler) AddPicture(c *gin.Context) {
 	response.Success(c, http.StatusOK, "file uploaded", nil, nil)
 }
 
+func (h *ownerHandler) AddGalleryPicture(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	link, err := h.Repository.Upload(c)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "file not accepted", err)
+		return
+	}
+	galleryPic := model.Picture{
+		Link:    link,
+		OwnerID: claims.ID,
+	}
+	err = h.Repository.AddGalleryPicture(&galleryPic)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "add gallery failed", err)
+		return
+	}
+	response.Success(c, http.StatusCreated, "gallery added", galleryPic, nil)
+}
+
 func (h *ownerHandler) GetAllPictures(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
 
-	data, err := h.Repository.GetAllPictures(claims.ID)
+	links, err := h.Repository.GetAllPictures(claims.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "get pictures failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "records found", data, nil)
+	response.Success(c, http.StatusOK, "records found", links, nil)
 }
 
 func (h *ownerHandler) GetAllOwner(c *gin.Context) {
