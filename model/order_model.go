@@ -23,5 +23,5 @@ type Review struct {
 
 type CreateReviewRequest struct {
 	Ulasan string `json:"ulasan" binding:"required"`
-	Rating int    `json:"rating" binding:"required"`
+	Rating string `json:"rating" binding:"required"`
 }

@@ -6,6 +6,7 @@ import (
 	"intern_BCC/repository"
 	"intern_BCC/sdk/response"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -87,6 +88,7 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		response.FailOrError(c, http.StatusUnprocessableEntity, "create review failed", err)
 		return
 	}
+	rate, err := strconv.ParseUint(request.Rating, 10, 64)
 	id := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&id); err != nil {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
@@ -105,7 +107,7 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		OrderID:    id.ID,
 		Nama:       customer.Nama,
 		Ulasan:     request.Ulasan,
-		Rating:     request.Rating,
+		Rating:     int(rate),
 	}
 	err = h.Repository.CreateReview(&review)
 	if err != nil {
