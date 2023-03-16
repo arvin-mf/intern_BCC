@@ -16,6 +16,7 @@ type Review struct {
 	CustomerID uint   `json:"customer_id"`
 	SpaceID    uint   `json:"space_id"`
 	OrderID    uint   `json:"order_id"`
+	Nama       string `gorm:"type:VARCHAR(50)" json:"nama"`
 	Ulasan     string `gorm:"type:LONGTEXT" json:"ulasan"`
 	Rating     int    `json:"rating"`
 }

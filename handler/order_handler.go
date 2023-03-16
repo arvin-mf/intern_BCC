@@ -93,15 +93,21 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		return
 	}
 	order, _ := h.Repository.GetOrderByID(id.ID)
+	customer, err := h.Repository.GetCustomerByID(order.CustomerID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "customer not found", err)
+		return
+	}
 
 	review := model.Review{
 		CustomerID: claims.ID,
 		SpaceID:    order.SpaceID,
 		OrderID:    id.ID,
+		Nama:       customer.Nama,
 		Ulasan:     request.Ulasan,
 		Rating:     request.Rating,
 	}
-	err := h.Repository.CreateReview(&review)
+	err = h.Repository.CreateReview(&review)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "create review failed", err)
 		return

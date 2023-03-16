@@ -60,6 +60,12 @@ func (r *OrderRepository) GetSpaceByID(id uint) (model.Space, error) {
 	return space, err
 }
 
+func (r *OrderRepository) GetCustomerByID(id uint) (model.Customer, error) {
+	var customer model.Customer
+	err := r.db.First(&customer, id).Error
+	return customer, err
+}
+
 func (r *OrderRepository) UpdateRating(spaceID uint, newRating float64) error {
 	space := model.Space{}
 	_ = r.db.First(&space, spaceID).Error

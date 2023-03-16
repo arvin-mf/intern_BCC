@@ -133,6 +133,19 @@ func (r *SpaceRepository) GetCustomerByID(id uint) (model.Customer, error) {
 	return customer, err
 }
 
+func (r *SpaceRepository) GetPicturesByOwnerID(id uint) ([]string, error) {
+	var pictures []model.Picture
+	err := r.db.Model(model.Picture{}).Where("owner_id = ?", id).Find(&pictures).Error
+	if err != nil {
+		return nil, err
+	}
+	var links []string
+	for _, picture := range pictures {
+		links = append(links, picture.Link)
+	}
+	return links, err
+}
+
 func (r *SpaceRepository) DeleteSpaceByID(id uint) error {
 	var space model.Space
 	err := r.db.Delete(&space, id).Error

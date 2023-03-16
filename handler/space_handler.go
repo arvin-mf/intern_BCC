@@ -110,15 +110,22 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		return
 	}
 
-	reviews, _, err := h.Repository.GetReviewsBySpaceID(request.ID)
+	pics, err := h.Repository.GetPicturesByOwnerID(space.OwnerID)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "failed getting pictures", err)
+		return
+	}
+
+	reviews, _, err := h.Repository.GetReviewsBySpaceID(space.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
 		return
 	}
 
 	response.Success(c, http.StatusOK, "space found", gin.H{
-		"space":   space,
-		"reviews": reviews,
+		"pictures": pics,
+		"space":    space,
+		"reviews":  reviews,
 	}, nil)
 }
 
@@ -136,14 +143,20 @@ func (h *spaceHandler) AlterCreateReview(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
+	customer, err := h.Repository.GetCustomerByID(claims.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "customer not found", err)
+		return
+	}
 	review := model.Review{
 		CustomerID: claims.ID,
 		SpaceID:    id.ID,
 		OrderID:    1,
+		Nama:       customer.Nama,
 		Ulasan:     request.Ulasan,
 		Rating:     request.Rating,
 	}
-	err := h.Repository.CreateReview(&review)
+	err = h.Repository.CreateReview(&review)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "review creation failed", err)
 		return
