@@ -139,7 +139,7 @@ func (h *spaceHandler) AlterCreateReview(c *gin.Context) {
 	review := model.Review{
 		CustomerID: claims.ID,
 		SpaceID:    id.ID,
-		OrderID:    0,
+		OrderID:    1,
 		Ulasan:     request.Ulasan,
 		Rating:     request.Rating,
 	}
