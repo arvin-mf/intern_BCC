@@ -181,6 +181,32 @@ func (h *ownerHandler) UpdateCapacity(c *gin.Context) {
 	response.Success(c, http.StatusOK, "capacity updated", nil, nil)
 }
 
+func (h *ownerHandler) UpdatePrice(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.PriceRequest{}
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
+		return
+	}
+	cat := model.GetByCatRequest{}
+	err = c.ShouldBindUri(&cat)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "space not found", err)
+		return
+	}
+	err = h.Repository.UpdatePrice(space.ID, request.Harga)
+
+	response.Success(c, http.StatusOK, "price updated", nil, nil)
+}
+
 func (h *ownerHandler) AddFacilities(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
@@ -355,19 +381,4 @@ func (h *ownerHandler) DeleteOwnerByID(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, "deleting success", nil, nil)
-}
-
-func (h *ownerHandler) AddPic(c *gin.Context) {
-	request := model.PictureRequest{}
-	err := c.ShouldBindJSON(&request)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
-		return
-	}
-	err = h.Repository.AddPicture(request.SpaceID, request.Link)
-	if err != nil {
-		response.FailOrError(c, http.StatusInternalServerError, "add picture failed", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "add picture succeeded", nil, nil)
 }

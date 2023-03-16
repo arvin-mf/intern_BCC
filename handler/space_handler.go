@@ -85,6 +85,16 @@ func (h *spaceHandler) GetSpaceByParam(c *gin.Context) {
 	}
 	spaceParam.ProcessPagin(totalElements)
 
+	location := model.UserLocation{
+		Lat: -7.9537341,
+		Lon: 112.609102,
+	}
+	err = h.Repository.UpdateDistance(spaces, location)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update distance failed", err)
+		return
+	}
+
 	response.Success(c, http.StatusOK, "Spaces found", spaces, &spaceParam)
 }
 
@@ -100,7 +110,7 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		return
 	}
 
-	reviews, err := h.Repository.GetReviewsBySpaceID(request.ID)
+	reviews, _, err := h.Repository.GetReviewsBySpaceID(request.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
 		return
@@ -110,6 +120,52 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		"space":   space,
 		"reviews": reviews,
 	}, nil)
+}
+
+func (h *spaceHandler) AlterCreateReview(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	request := model.CreateReviewRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		response.FailOrError(c, http.StatusUnprocessableEntity, "create review failed", err)
+		return
+	}
+	id := model.GetByIDRequest{}
+	if err := c.ShouldBindUri(&id); err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+	review := model.Review{
+		CustomerID: claims.ID,
+		SpaceID:    id.ID,
+		OrderID:    0,
+		Ulasan:     request.Ulasan,
+		Rating:     request.Rating,
+	}
+	err := h.Repository.CreateReview(&review)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "review creation failed", err)
+		return
+	}
+
+	reviews, count, err := h.Repository.GetReviewsBySpaceID(id.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "reviews not found", err)
+		return
+	}
+	var newRating float64
+	for _, rating := range reviews {
+		newRating += float64(rating.Rating)
+	}
+	newRating /= float64(count)
+	err = h.Repository.UpdateRating(id.ID, newRating)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update rating failed", err)
+		return
+	}
+
+	response.Success(c, http.StatusCreated, "review creation succeeded", nil, nil)
 }
 
 func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {
@@ -124,19 +180,4 @@ func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {
 		return
 	}
 	response.Success(c, http.StatusOK, "delete space success", nil, nil)
-}
-
-func (h *spaceHandler) InputLocation(c *gin.Context) {
-	request := model.InputLocation{}
-	err := c.ShouldBindJSON(&request)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
-		return
-	}
-	err = h.Repository.InputLocation(request)
-	if err != nil {
-		response.FailOrError(c, http.StatusInternalServerError, "input location failed", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "input location succeeded", nil, nil)
 }

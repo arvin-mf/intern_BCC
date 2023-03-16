@@ -40,6 +40,17 @@ func (r *OrderRepository) GetReviewsBySpaceID(spaceID uint) ([]model.Review, int
 
 	var count int64
 	err = r.db.Model(model.Review{}).Where("space_id = ?", spaceID).Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	var space model.Space
+	err = r.db.First(&space, spaceID).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	space.ReviewsCount = int(count)
+	err = r.db.Save(&space).Error
+
 	return reviews, int(count), err
 }
 

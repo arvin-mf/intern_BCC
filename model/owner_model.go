@@ -46,3 +46,7 @@ type DescriptionRequest struct {
 type CapacityRequest struct {
 	Kapasitas int `json:"kapasitas"`
 }
+
+type PriceRequest struct {
+	Harga int `json:"harga" binding:"required"`
+}

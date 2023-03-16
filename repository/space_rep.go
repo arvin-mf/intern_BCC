@@ -95,13 +95,36 @@ func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
 	return space, err
 }
 
-func (r *SpaceRepository) GetReviewsBySpaceID(id uint) ([]model.Review, error) {
+func (r *SpaceRepository) CreateReview(review *model.Review) error {
+	return r.db.Create(review).Error
+}
+
+func (r *SpaceRepository) GetReviewsBySpaceID(spaceID uint) ([]model.Review, int, error) {
 	var reviews []model.Review
-	err := r.db.Model(model.Review{}).Where("space_id = ?", id).Find(&reviews).Error
+	err := r.db.Where("space_id = ?", spaceID).Find(&reviews).Error
+
+	var count int64
+	err = r.db.Model(model.Review{}).Where("space_id = ?", spaceID).Count(&count).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return reviews, err
+	var space model.Space
+	err = r.db.First(&space, spaceID).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	space.ReviewsCount = int(count)
+	err = r.db.Save(&space).Error
+
+	return reviews, int(count), err
+}
+
+func (r *SpaceRepository) UpdateRating(spaceID uint, newRating float64) error {
+	space := model.Space{}
+	_ = r.db.First(&space, spaceID).Error
+	space.Rating = newRating
+	err := r.db.Save(&space).Error
+	return err
 }
 
 func (r *SpaceRepository) GetCustomerByID(id uint) (model.Customer, error) {

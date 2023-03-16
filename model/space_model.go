@@ -8,21 +8,22 @@ import (
 
 type Space struct {
 	gorm.Model
-	Nama       string     `gorm:"type:VARCHAR(50); NOT NULL" json:"nama"`
-	Kategori   string     `gorm:"type:VARCHAR(20); NOT NULL" json:"kategori"`
-	Deskripsi  string     `gorm:"type:LONGTEXT" json:"deskripsi"`
-	Alamat     string     `gorm:"type:LONGTEXT NOT NULL" json:"alamat"`
-	Facilities []Facility `json:"facilities"`
-	Kapasitas  int        `json:"kapasitas"`
-	Harga      int        `json:"harga"`
-	Periode    int        `json:"periode"`
-	Foto       string     `gorm:"type:LONGTEXT" json:"foto"`
-	Lat        float64    `json:"lat"`
-	Lon        float64    `json:"lon"`
-	Jarak      float64    `json:"jarak"`
-	Rating     float64    `gorm:"default:5.0" json:"rating"`
-	OwnerID    uint       `json:"owner_id"`
-	Options    []Option   `json:"options"`
+	Nama         string     `gorm:"type:VARCHAR(50); NOT NULL" json:"nama"`
+	Kategori     string     `gorm:"type:VARCHAR(20); NOT NULL" json:"kategori"`
+	Deskripsi    string     `gorm:"type:LONGTEXT" json:"deskripsi"`
+	Alamat       string     `gorm:"type:LONGTEXT NOT NULL" json:"alamat"`
+	Facilities   []Facility `json:"facilities"`
+	Kapasitas    int        `json:"kapasitas"`
+	Harga        int        `json:"harga"`
+	Periode      int        `json:"periode"`
+	Foto         string     `gorm:"type:LONGTEXT" json:"foto"`
+	Lat          float64    `json:"lat"`
+	Lon          float64    `json:"lon"`
+	Jarak        float64    `json:"jarak"`
+	Rating       float64    `gorm:"default:5.0" json:"rating"`
+	ReviewsCount int        `json:"reviews_count"`
+	OwnerID      uint       `json:"owner_id"`
+	Options      []Option   `json:"options"`
 }
 
 var Category []string = []string{"private", "coworking", "meeting room"}

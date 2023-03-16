@@ -112,6 +112,17 @@ func (r *OwnerRepository) AddFacilities(id uint, facils []string) error {
 	return err
 }
 
+func (r *OwnerRepository) UpdatePrice(id uint, harga int) error {
+	var space model.Space
+	err := r.db.First(&space, id).Error
+	if err != nil {
+		return err
+	}
+	space.Harga = harga
+	err = r.db.Save(&space).Error
+	return err
+}
+
 func (r *OwnerRepository) SwitchAvailability(id uint) (bool, error) {
 	var date model.Date
 	err := r.db.First(&date, id).Error

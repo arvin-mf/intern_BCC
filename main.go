@@ -53,6 +53,7 @@ func main() {
 	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
 	r.GET("/space/:id", spaceHandler.GetSpaceByID)
 	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
+	r.POST("/space/:id/review", middleware.JwtMiddleware(), spaceHandler.AlterCreateReview)
 
 	r.GET("/orders", middleware.JwtMiddleware(), orderHandler.GetAllOrder)
 	r.GET("/order/:id", middleware.JwtMiddleware(), orderHandler.GetOrderByID)
@@ -64,14 +65,12 @@ func main() {
 	r.GET("/owner/space/:kategori", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaceByCat)
 	r.PATCH("/owner/space/:kategori/description", middleware.JwtMiddleware(), ownerHandler.UpdateDescription)
 	r.PATCH("/owner/space/:kategori/capacity", middleware.JwtMiddleware(), ownerHandler.UpdateCapacity)
+	r.PATCH("/owner/space/:kategori/price", middleware.JwtMiddleware(), ownerHandler.UpdatePrice)
 	r.POST("/owner/space/:kategori/facilities", middleware.JwtMiddleware(), ownerHandler.AddFacilities)
 	r.POST("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
 	r.POST("/owner/space/:kategori/picture", middleware.JwtMiddleware(), ownerHandler.AddPicture)
 	r.POST("/owner/picture", middleware.JwtMiddleware(), ownerHandler.AddGalleryPicture)
 	r.GET("/owner/pictures", middleware.JwtMiddleware(), ownerHandler.GetAllPictures)
-
-	r.POST("/pic", ownerHandler.AddPic)
-	r.PATCH("/loc", spaceHandler.InputLocation)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)
