@@ -107,16 +107,36 @@ func (r *OwnerRepository) UpdateCapacity(id uint, capac int) error {
 }
 
 func (r *OwnerRepository) AddGeneralFacilities(id uint, facils []string) error {
-	var owner model.Owner
-	err := r.db.First(&owner, id).Error
-	if err != nil {
-		return err
+	var gfs []model.GeneralFacility
+	err := r.db.Model(model.GeneralFacility{}).Where("owner_id = ?", id).Find(&gfs).Error
+
+	var generalFacility model.GeneralFacility
+	var cek int
+	for _, gf := range gfs {
+		cek = 0
+		for _, facil := range facils {
+			if gf.Ket == facil {
+				cek++
+			}
+		}
+		if cek == 0 {
+			err = r.db.Where("owner_id = ? AND ket = ?", id, gf.Ket).Delete(&generalFacility).Error
+		}
 	}
 
-	for _, description := range facils {
+	for _, facil := range facils {
+		cek = 0
+		for _, gf := range gfs {
+			if facil == gf.Ket {
+				cek++
+			}
+		}
+		if cek > 0 {
+			continue
+		}
 		facility := model.GeneralFacility{
-			Ket:     description,
-			OwnerID: owner.ID,
+			Ket:     facil,
+			OwnerID: id,
 		}
 		result := r.db.Create(&facility)
 		if result.Error != nil {
