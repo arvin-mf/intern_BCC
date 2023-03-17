@@ -68,6 +68,11 @@ func (h *ownerHandler) GetOwnerSpaces(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
 
+	owner, err := h.Repository.GetOwnerByID(claims.ID)
+	if err != nil {
+		response.FailOrError(c, http.StatusNotFound, "owner not found", err)
+		return
+	}
 	spaces, err := h.Repository.GetOwnerSpaces(claims.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "spaces not found", err)
@@ -84,6 +89,7 @@ func (h *ownerHandler) GetOwnerSpaces(c *gin.Context) {
 	}
 
 	response.Success(c, http.StatusOK, "spaces found", gin.H{
+		"owner":   owner,
 		"spaces":  spaces,
 		"reviews": reviews,
 	}, nil)

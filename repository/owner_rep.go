@@ -219,7 +219,7 @@ func (r *OwnerRepository) GetAllOwner() ([]model.Owner, error) {
 
 func (r *OwnerRepository) GetOwnerByID(id uint) (model.Owner, error) {
 	owner := model.Owner{}
-	err := r.db.Preload("Spaces").First(&owner, id).Error
+	err := r.db.First(&owner, id).Error
 	return owner, err
 }
 
