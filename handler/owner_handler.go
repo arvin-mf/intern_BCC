@@ -146,7 +146,7 @@ func (h *ownerHandler) UpdateDescription(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "description updated", nil, nil)
+	response.Success(c, http.StatusOK, "description updated", request, nil)
 }
 
 func (h *ownerHandler) UpdateCapacity(c *gin.Context) {
@@ -178,7 +178,7 @@ func (h *ownerHandler) UpdateCapacity(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "update capacity failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "capacity updated", nil, nil)
+	response.Success(c, http.StatusOK, "capacity updated", request, nil)
 }
 
 func (h *ownerHandler) UpdatePrice(c *gin.Context) {
@@ -204,7 +204,7 @@ func (h *ownerHandler) UpdatePrice(c *gin.Context) {
 	}
 	err = h.Repository.UpdatePrice(space.ID, request.Harga)
 
-	response.Success(c, http.StatusOK, "price updated", nil, nil)
+	response.Success(c, http.StatusOK, "price updated", request, nil)
 }
 
 func (h *ownerHandler) AddFacilities(c *gin.Context) {
@@ -235,7 +235,7 @@ func (h *ownerHandler) AddFacilities(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "update description succeeded", nil, nil)
+	response.Success(c, http.StatusOK, "update description succeeded", facils, nil)
 }
 
 func (h *ownerHandler) SwitchAvailability(c *gin.Context) {
@@ -313,7 +313,7 @@ func (h *ownerHandler) AddPicture(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "upload file failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "file uploaded", nil, nil)
+	response.Success(c, http.StatusOK, "file uploaded", link, nil)
 }
 
 func (h *ownerHandler) AddGalleryPicture(c *gin.Context) {

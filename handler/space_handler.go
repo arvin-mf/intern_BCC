@@ -105,7 +105,7 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
-	space, err := h.Repository.GetSpaceByID(request.ID)
+	space, options, err := h.Repository.GetSpaceByID(request.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
@@ -126,6 +126,7 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 	response.Success(c, http.StatusOK, "space found", gin.H{
 		"pictures": pics,
 		"space":    space,
+		"options":  options,
 		"reviews":  reviews,
 	}, nil)
 }
@@ -180,7 +181,7 @@ func (h *spaceHandler) AlterCreateReview(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusCreated, "review creation succeeded", nil, nil)
+	response.Success(c, http.StatusCreated, "review creation succeeded", review, nil)
 }
 
 func (h *spaceHandler) DeleteSpaceByID(c *gin.Context) {

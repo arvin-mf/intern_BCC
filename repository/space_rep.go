@@ -89,10 +89,16 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 	return spaces, int(totalElem), err
 }
 
-func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, error) {
+func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, []model.Option, error) {
 	space := model.Space{}
-	err := r.db.Preload("Facilities").Preload("Options").Preload("Options.Dates").First(&space, id).Error
-	return space, err
+	err := r.db.Model(model.Space{}).Preload("Facilities").First(&space, id).Error
+
+	var options []model.Option
+	err = r.db.Model(model.Option{}).Where("space_id = ?", id).
+		Preload("Dates", func(db *gorm.DB) *gorm.DB {
+			return db.Limit(7)
+		}).Find(&options).Error
+	return space, options, err
 }
 
 func (r *SpaceRepository) CreateReview(review *model.Review) error {

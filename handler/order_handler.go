@@ -131,5 +131,5 @@ func (h *orderHandler) CreateReview(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, http.StatusCreated, "review creation succeeded", nil, nil)
+	response.Success(c, http.StatusCreated, "review creation succeeded", review, nil)
 }

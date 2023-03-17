@@ -32,7 +32,7 @@ func (h *optionHandler) CreateOption(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "create option failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "option created", nil, nil)
+	response.Success(c, http.StatusCreated, "option created", option, nil)
 }
 
 func (h *optionHandler) CreateDate(c *gin.Context) {
@@ -51,5 +51,5 @@ func (h *optionHandler) CreateDate(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "create date failed", err)
 		return
 	}
-	response.Success(c, http.StatusCreated, "date creation success", nil, nil)
+	response.Success(c, http.StatusCreated, "date creation success", date, nil)
 }
