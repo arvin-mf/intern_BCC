@@ -76,8 +76,8 @@ func main() {
 	r.POST("/owner", ownerHandler.CreateOwner)
 	r.POST("/space", spaceHandler.CreateSpace)
 	r.DELETE("/space/:id", spaceHandler.DeleteSpaceByID)
-	r.POST("/space/:id/option", optionHandler.CreateOption)
-	r.POST("/space/:id/date", optionHandler.CreateDate)
+	r.POST("/space/option", optionHandler.CreateOption)
+	r.POST("/space/date", optionHandler.CreateDate)
 
 	//---- Keperluan Cek Database ----
 	r.GET("/customers", customerHandler.GetAllCustomer)
