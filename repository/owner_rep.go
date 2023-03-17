@@ -156,15 +156,13 @@ func (r *OwnerRepository) UpdatePrice(id uint, harga int) error {
 	return err
 }
 
-func (r *OwnerRepository) SwitchAvailability(id uint) (bool, error) {
+func (r *OwnerRepository) SwitchAvailability(id uint) (model.Date, error) {
 	var date model.Date
 	err := r.db.First(&date, id).Error
-	if err != nil {
-		return false, err
-	}
+
 	date.Tersedia = !date.Tersedia
 	err = r.db.Save(&date).Error
-	return date.Tersedia, err
+	return date, err
 }
 
 func (r *OwnerRepository) GetSpaceByID(id uint) (model.Space, error) {
@@ -232,7 +230,7 @@ func (r *OwnerRepository) GetAllOwner() ([]model.Owner, error) {
 
 func (r *OwnerRepository) GetOwnerByID(id uint) (model.Owner, error) {
 	owner := model.Owner{}
-	err := r.db.First(&owner, id).Error
+	err := r.db.Preload("GeneralFacilities").First(&owner, id).Error
 	return owner, err
 }
 

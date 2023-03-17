@@ -244,7 +244,7 @@ func (h *ownerHandler) SwitchAvailability(c *gin.Context) {
 
 	request := model.GetByIDRequest{}
 	if err := c.ShouldBindUri(&request); err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "failed getting owner", err)
+		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
 
@@ -273,12 +273,12 @@ func (h *ownerHandler) SwitchAvailability(c *gin.Context) {
 		return
 	}
 
-	statusNow, err := h.Repository.SwitchAvailability(date.ID)
+	newData, err := h.Repository.SwitchAvailability(date.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "switch failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "switch availability succeeded", statusNow, nil)
+	response.Success(c, http.StatusOK, "switch availability succeeded", newData, nil)
 }
 
 func (h *ownerHandler) AddPicture(c *gin.Context) {
