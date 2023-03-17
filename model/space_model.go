@@ -34,6 +34,12 @@ type Facility struct {
 	SpaceID uint   `json:"space_id"`
 }
 
+type GeneralFacility struct {
+	gorm.Model
+	Ket     string `gorm:"type:TEXT" json:"ket"`
+	OwnerID uint   `json:"owner_id"`
+}
+
 type Option struct {
 	gorm.Model
 	Rentang string `gorm:"type:VARCHAR(10); NOT NULL" json:"rentang"`

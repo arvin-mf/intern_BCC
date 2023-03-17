@@ -71,24 +71,44 @@ func (r *OwnerRepository) GetReviewsBySpaceID(id uint) ([]model.Review, error) {
 }
 
 func (r *OwnerRepository) UpdateDescription(id uint, desc string) error {
-	var space model.Space
-	err := r.db.First(&space, id).Error
+	var owner model.Owner
+	err := r.db.First(&owner, id).Error
 	if err != nil {
 		return err
 	}
-	space.Deskripsi = desc
-	err = r.db.Save(&space).Error
+	owner.Deskripsi = desc
+	err = r.db.Save(&owner).Error
 	return err
 }
 
 func (r *OwnerRepository) UpdateCapacity(id uint, capac int) error {
-	var space model.Space
-	err := r.db.First(&space, id).Error
+	var owner model.Owner
+	err := r.db.First(&owner, id).Error
 	if err != nil {
 		return err
 	}
-	space.Kapasitas = capac
-	err = r.db.Save(&space).Error
+	owner.Kapasitas = capac
+	err = r.db.Save(&owner).Error
+	return err
+}
+
+func (r *OwnerRepository) AddGeneralFacility(id uint, facils []string) error {
+	var owner model.Owner
+	err := r.db.First(&owner, id).Error
+	if err != nil {
+		return err
+	}
+
+	for _, description := range facils {
+		facility := model.GeneralFacility{
+			Ket:     description,
+			OwnerID: owner.ID,
+		}
+		result := r.db.Create(&facility)
+		if result.Error != nil {
+			return err
+		}
+	}
 	return err
 }
 

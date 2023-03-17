@@ -128,20 +128,7 @@ func (h *ownerHandler) UpdateDescription(c *gin.Context) {
 		return
 	}
 
-	cat := model.GetByCatRequest{}
-	err = c.ShouldBindUri(&cat)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
-		return
-	}
-
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
-	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "space not found", err)
-		return
-	}
-
-	err = h.Repository.UpdateDescription(space.ID, request.Deskripsi)
+	err = h.Repository.UpdateDescription(claims.ID, request.Deskripsi)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
 		return
@@ -160,20 +147,7 @@ func (h *ownerHandler) UpdateCapacity(c *gin.Context) {
 		return
 	}
 
-	cat := model.GetByCatRequest{}
-	err = c.ShouldBindUri(&cat)
-	if err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
-		return
-	}
-
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
-	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "space not found", err)
-		return
-	}
-
-	err = h.Repository.UpdateCapacity(space.ID, request.Kapasitas)
+	err = h.Repository.UpdateCapacity(claims.ID, request.Kapasitas)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "update capacity failed", err)
 		return
@@ -235,7 +209,26 @@ func (h *ownerHandler) AddFacilities(c *gin.Context) {
 		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
 		return
 	}
-	response.Success(c, http.StatusOK, "update description succeeded", facils, nil)
+	response.Success(c, http.StatusOK, "add facilities succeeded", facils, nil)
+}
+
+func (h *ownerHandler) AddGeneralFacility(c *gin.Context) {
+	claimsTemp, _ := c.Get("user")
+	claims := claimsTemp.(model.UserClaims)
+
+	var facils model.AddFacilRequest
+	err := c.ShouldBindJSON(&facils)
+	if err != nil {
+		response.FailOrError(c, http.StatusBadRequest, "invalid body", err)
+		return
+	}
+
+	err = h.Repository.AddGeneralFacility(claims.ID, facils.Fasil)
+	if err != nil {
+		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
+		return
+	}
+	response.Success(c, http.StatusOK, "add facilities succeeded", facils, nil)
 }
 
 func (h *ownerHandler) SwitchAvailability(c *gin.Context) {
