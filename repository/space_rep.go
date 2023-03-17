@@ -3,7 +3,6 @@ package repository
 import (
 	"intern_BCC/model"
 	"math"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -90,21 +89,27 @@ func (r *SpaceRepository) GetSpaceByParam(pagin *model.PaginParam, cat *model.Ca
 	return spaces, int(totalElem), err
 }
 
-func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, []model.Option, string, error) {
+func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, []model.Date, string, error) {
 	space := model.Space{}
-	err := r.db.Model(model.Space{}).Preload("Facilities").First(&space, id).Error
+	err := r.db.Model(model.Space{}).Preload("Facilities").Preload("Options").First(&space, id).Error
 
 	var options []model.Option
-	err = r.db.Model(model.Option{}).Where("space_id = ?", id).
-		Preload("Dates", func(db *gorm.DB) *gorm.DB {
-			return db.Where("tanggal >= ?", time.Now().AddDate(0, 0, 3)).Limit(7)
-		}).Find(&options).Error
+	err = r.db.Model(model.Option{}).Where("space_id = ?", id).Find(&options).Error
+
+	var dates []model.Date
+	for _, option := range options {
+		var temp []model.Date
+		err = r.db.Where("option_id = ?", option.ID).Limit(7).Find(&temp).Error
+		for _, date := range temp {
+			dates = append(dates, date)
+		}
+	}
 
 	var owner model.Owner
 	err = r.db.First(&owner, space.OwnerID).Error
 	telp := owner.Whatsapp
 
-	return space, options, telp, err
+	return space, dates, telp, err
 }
 
 func (r *SpaceRepository) CreateReview(review *model.Review) error {

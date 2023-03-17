@@ -105,7 +105,7 @@ func (h *ownerHandler) GetOwnerSpaceByCat(c *gin.Context) {
 		return
 	}
 
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	space, dates, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
@@ -119,6 +119,7 @@ func (h *ownerHandler) GetOwnerSpaceByCat(c *gin.Context) {
 
 	response.Success(c, http.StatusOK, "space found", gin.H{
 		"space":   space,
+		"pilihan": dates,
 		"reviews": reviews,
 	}, nil)
 }
@@ -177,7 +178,7 @@ func (h *ownerHandler) UpdatePrice(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
+	space, _, err := h.Repository.GetOwnerSpaceByCat(claims.ID, cat.Kategori)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
@@ -204,7 +205,7 @@ func (h *ownerHandler) AddFacilities(c *gin.Context) {
 		return
 	}
 
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	space, _, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
@@ -293,7 +294,7 @@ func (h *ownerHandler) AddPicture(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
-	space, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
+	space, _, err := h.Repository.GetOwnerSpaceByCat(claims.ID, request.Kategori)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return

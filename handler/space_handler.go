@@ -105,7 +105,7 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 		response.FailOrError(c, http.StatusBadRequest, "invalid request", err)
 		return
 	}
-	space, options, telp, err := h.Repository.GetSpaceByID(request.ID)
+	space, dates, telp, err := h.Repository.GetSpaceByID(request.ID)
 	if err != nil {
 		response.FailOrError(c, http.StatusNotFound, "space not found", err)
 		return
@@ -126,7 +126,7 @@ func (h *spaceHandler) GetSpaceByID(c *gin.Context) {
 	response.Success(c, http.StatusOK, "space found", gin.H{
 		"pictures": pics,
 		"space":    space,
-		"options":  options,
+		"pilihan":  dates,
 		"telp":     telp,
 		"reviews":  reviews,
 	}, nil)

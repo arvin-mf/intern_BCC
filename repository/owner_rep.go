@@ -52,13 +52,26 @@ func (r *OwnerRepository) GetOwnerReviews(id []uint) ([]model.Review, error) {
 	return reviews, err
 }
 
-func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.Space, error) {
+func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.Space, []model.Date, error) {
 	var space model.Space
 	err := r.db.
-		Preload("Facilities").Preload("Options").Preload("Options.Dates").
+		Preload("Facilities").Preload("Options").
 		Where("owner_id = ? AND kategori = ?", ownerID, model.Category[category-1]).
 		First(&space).Error
-	return space, err
+
+	var options []model.Option
+	err = r.db.Model(model.Option{}).Where("space_id = ?", space.ID).Find(&options).Error
+
+	var dates []model.Date
+	for _, option := range options {
+		var temp []model.Date
+		err = r.db.Where("option_id = ?", option.ID).Limit(7).Find(&temp).Error
+		for _, date := range temp {
+			dates = append(dates, date)
+		}
+	}
+
+	return space, dates, err
 }
 
 func (r *OwnerRepository) GetReviewsBySpaceID(id uint) ([]model.Review, error) {
