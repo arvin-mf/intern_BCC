@@ -29,6 +29,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&model.Owner{},
 		&model.Space{},
 		&model.Facility{},
+		&model.GeneralFacility{},
 		&model.Picture{},
 		&model.Order{},
 		&model.Review{},

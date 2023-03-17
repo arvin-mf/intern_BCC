@@ -52,8 +52,8 @@ func main() {
 	r.GET("/spaces", spaceHandler.GetAllSpace)
 	r.GET("/spaces/find", spaceHandler.GetSpaceByParam)
 	r.GET("/space/:id", spaceHandler.GetSpaceByID)
-	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
 	r.POST("/space/:id/review", middleware.JwtMiddleware(), spaceHandler.AlterCreateReview)
+	r.POST("/space/:id", middleware.JwtMiddleware(), orderHandler.CreateOrder)
 
 	r.GET("/orders", middleware.JwtMiddleware(), orderHandler.GetAllOrder)
 	r.GET("/order/:id", middleware.JwtMiddleware(), orderHandler.GetOrderByID)
@@ -64,26 +64,23 @@ func main() {
 	r.GET("/owner/spaces", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaces)
 	r.PATCH("/owner/space/description", middleware.JwtMiddleware(), ownerHandler.UpdateDescription)
 	r.PATCH("/owner/space/capacity", middleware.JwtMiddleware(), ownerHandler.UpdateCapacity)
-	r.POST("/owner/space/facilities", middleware.JwtMiddleware(), ownerHandler.AddGeneralFacility)
+	r.POST("/owner/space/facilities", middleware.JwtMiddleware(), ownerHandler.AddGeneralFacilities)
 
 	r.GET("/owner/space/:kategori", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaceByCat)
 	r.PATCH("/owner/space/:kategori/price", middleware.JwtMiddleware(), ownerHandler.UpdatePrice)
 	r.POST("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
 	r.POST("/owner/space/:kategori/picture", middleware.JwtMiddleware(), ownerHandler.AddPicture)
 
-	r.POST("/owner/picture", middleware.JwtMiddleware(), ownerHandler.AddGalleryPicture)
 	r.GET("/owner/pictures", middleware.JwtMiddleware(), ownerHandler.GetAllPictures)
+	r.POST("/owner/picture", middleware.JwtMiddleware(), ownerHandler.AddGalleryPicture)
 
 	//---- Admin ----
 	r.POST("/owner", ownerHandler.CreateOwner)
 	r.POST("/space", spaceHandler.CreateSpace)
 	r.DELETE("/space/:id", spaceHandler.DeleteSpaceByID)
 	r.POST("/space/option", optionHandler.CreateOption)
-	r.POST("/space/date", optionHandler.CreateDate)
 
 	//---- Keperluan Cek Database ----
-	r.GET("/customers", customerHandler.GetAllCustomer)
-	r.GET("/customer/:id", customerHandler.GetCustomerByID)
 	r.DELETE("/customer/:id", customerHandler.DeleteCustomerByID)
 	r.GET("/owners", ownerHandler.GetAllOwner)
 	r.GET("/owner/:id", ownerHandler.GetOwnerByID)

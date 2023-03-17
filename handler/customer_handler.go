@@ -80,29 +80,6 @@ func (h *customerHandler) Login(c *gin.Context) {
 	}, nil)
 }
 
-func (h *customerHandler) GetAllCustomer(c *gin.Context) {
-	customers, err := h.Repository.GetAllCustomer()
-	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "customers not found", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "customers found", customers, nil)
-}
-
-func (h *customerHandler) GetCustomerByID(c *gin.Context) {
-	request := model.GetByIDRequest{}
-	if err := c.ShouldBindUri(&request); err != nil {
-		response.FailOrError(c, http.StatusBadRequest, "failed getting customer", err)
-		return
-	}
-	customer, err := h.Repository.GetCustomerByID(request.ID)
-	if err != nil {
-		response.FailOrError(c, http.StatusNotFound, "customer not found", err)
-		return
-	}
-	response.Success(c, http.StatusOK, "customer found", customer, nil)
-}
-
 func (h *customerHandler) DeleteCustomerByID(c *gin.Context) {
 	ID := c.Param("id")
 	parsedID, _ := strconv.ParseUint(ID, 10, 64)

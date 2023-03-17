@@ -105,7 +105,7 @@ func (r *OwnerRepository) UpdateCapacity(id uint, capac int) error {
 	return err
 }
 
-func (r *OwnerRepository) AddGeneralFacility(id uint, facils []string) error {
+func (r *OwnerRepository) AddGeneralFacilities(id uint, facils []string) error {
 	var owner model.Owner
 	err := r.db.First(&owner, id).Error
 	if err != nil {

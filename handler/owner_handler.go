@@ -219,7 +219,7 @@ func (h *ownerHandler) AddFacilities(c *gin.Context) {
 	response.Success(c, http.StatusOK, "add facilities succeeded", facils, nil)
 }
 
-func (h *ownerHandler) AddGeneralFacility(c *gin.Context) {
+func (h *ownerHandler) AddGeneralFacilities(c *gin.Context) {
 	claimsTemp, _ := c.Get("user")
 	claims := claimsTemp.(model.UserClaims)
 
@@ -230,7 +230,7 @@ func (h *ownerHandler) AddGeneralFacility(c *gin.Context) {
 		return
 	}
 
-	err = h.Repository.AddGeneralFacility(claims.ID, facils.Fasil)
+	err = h.Repository.AddGeneralFacilities(claims.ID, facils.Fasil)
 	if err != nil {
 		response.FailOrError(c, http.StatusInternalServerError, "update description failed", err)
 		return
