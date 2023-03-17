@@ -3,6 +3,7 @@ package repository
 import (
 	"intern_BCC/model"
 	"math"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -99,7 +100,7 @@ func (r *SpaceRepository) GetSpaceByID(id uint) (model.Space, []model.Date, stri
 	var dates []model.Date
 	for _, option := range options {
 		var temp []model.Date
-		err = r.db.Where("option_id = ?", option.ID).Limit(7).Find(&temp).Error
+		err = r.db.Where("option_id = ? AND tanggal >= ?", option.ID, time.Now()).Limit(7).Find(&temp).Error
 		for _, date := range temp {
 			dates = append(dates, date)
 		}

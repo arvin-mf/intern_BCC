@@ -64,11 +64,11 @@ func main() {
 	r.GET("/owner/spaces", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaces)
 	r.PATCH("/owner/space/description", middleware.JwtMiddleware(), ownerHandler.UpdateDescription)
 	r.PATCH("/owner/space/capacity", middleware.JwtMiddleware(), ownerHandler.UpdateCapacity)
-	r.POST("/owner/space/facilities", middleware.JwtMiddleware(), ownerHandler.AddGeneralFacilities)
+	r.PATCH("/owner/space/facilities", middleware.JwtMiddleware(), ownerHandler.AddGeneralFacilities)
 
 	r.GET("/owner/space/:kategori", middleware.JwtMiddleware(), ownerHandler.GetOwnerSpaceByCat)
 	r.PATCH("/owner/space/:kategori/price", middleware.JwtMiddleware(), ownerHandler.UpdatePrice)
-	r.POST("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
+	r.PATCH("/owner/space/:kategori/:id", middleware.JwtMiddleware(), ownerHandler.SwitchAvailability)
 	r.POST("/owner/space/:kategori/picture", middleware.JwtMiddleware(), ownerHandler.AddPicture)
 
 	r.GET("/owner/pictures", middleware.JwtMiddleware(), ownerHandler.GetAllPictures)

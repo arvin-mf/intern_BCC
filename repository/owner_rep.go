@@ -3,6 +3,7 @@ package repository
 import (
 	"intern_BCC/model"
 	"intern_BCC/sdk/crypto"
+	"time"
 
 	supabasestorageuploader "github.com/adityarizkyramadhan/supabase-storage-uploader"
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func (r *OwnerRepository) GetOwnerSpaceByCat(ownerID uint, category int) (model.
 	var dates []model.Date
 	for _, option := range options {
 		var temp []model.Date
-		err = r.db.Where("option_id = ?", option.ID).Limit(7).Find(&temp).Error
+		err = r.db.Where("option_id = ? AND tanggal >= ?", option.ID, time.Now()).Limit(7).Find(&temp).Error
 		for _, date := range temp {
 			dates = append(dates, date)
 		}
